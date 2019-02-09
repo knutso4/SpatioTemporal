@@ -232,7 +232,6 @@
 ##' @importFrom Matrix t
 ##' @importFrom Matrix Matrix
 ##' @importFrom Matrix symmpart
-##' @importFrom Matrix cBind
 ##' 
 ##' @keywords package
 ##' @example Rd_examples/Ex_SpatioTemporal_package.R

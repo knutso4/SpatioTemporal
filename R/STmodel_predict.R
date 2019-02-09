@@ -615,7 +615,7 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
 
     ##contribution from REML estimate
     if( out$opts$type=="r" ){
-      var.beta.REML <- (cBind(rep(0,dimensions$L), bdiag(STdata$LUR.all)) -
+      var.beta.REML <- (cbind(rep(0,dimensions$L), bdiag(STdata$LUR.all)) -
                         sigma.B.C %*% (t(Fobs)%*%iSoo.Xtilde))
       var.beta.REML <- as.matrix(var.beta.REML)
       if( out$opts$beta.covar ){

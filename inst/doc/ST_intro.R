@@ -1,5 +1,5 @@
 ### R code from vignette source 'ST_intro.Rnw'
-### Encoding: ISO8859-1
+### Encoding: UTF-8
 
 ###################################################
 ### code chunk number 1: ST_intro.Rnw:124-129
