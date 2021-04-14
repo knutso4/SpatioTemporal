@@ -34,7 +34,7 @@
 ##' 
 ##' @example Rd_examples/Ex_c_STmodel.R
 ##'
-##' @author Johan Lindstrom
+##' @author Johan Lindström
 ##' 
 ##' @family STmodel methods
 ##' @family STdata functions

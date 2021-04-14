@@ -22,7 +22,7 @@
 ##' @return Returns a matrix with dimensions (number of timepoints)-by-(number
 ##'   of locations). Row and column names of the matrix are taken as \code{ID}
 ##'   and \code{sort(unique(date))} respectively.
-##' @author Johan Lindstrom
+##' @author Johan Lindström
 ##' 
 ##' @example Rd_examples/Ex_createDataMatrix.R
 ##' 
@@ -84,16 +84,13 @@ createDataMatrix <- function(STdata=NULL, obs=STdata$obs$obs,
 ##'   warning is given for each name not found in \code{ID}.
 ##' @return A list with two matrices; the estimated beta-coefficients and
 ##'   standard deviations of the estimates.
-##' @author Johan Lindstrom
+##' @author Johan Lindström
 ##' 
 ##' @example Rd_examples/Ex_estimateBetaFields.R
 ##' 
 ##' @family data matrix
 ##' @family STdata functions
 ##' @family STmodel functions
-##' @importFrom stats coefficients
-##' @importFrom stats lm
-##' @importFrom stats vcov
 ##' @export
 estimateBetaFields <- function(STdata=NULL, subset=NULL){
   ##create the data-matrix
@@ -139,7 +136,7 @@ estimateBetaFields <- function(STdata=NULL, subset=NULL){
 ##'   covariates and added to \code{STdata$covars}.
 ##' 
 ##' @example Rd_examples/Ex_removeSTmean.R
-##' @author Johan Lindstrom
+##' @author Johan Lindström
 ##' @family STdata functions
 ##' @export
 removeSTcovarMean <- function(STdata){
@@ -236,7 +233,7 @@ removeSTcovarMean <- function(STdata){
 ##' 
 ##' @example Rd_examples/Ex_detrendSTdata.R
 ##' 
-##' @author Assaf P. Oron and Johan Lindstrom
+##' @author Assaf P. Oron and Johan Lindström
 ##' @family STdata functions
 ##' @export
 detrendSTdata <- function(STdata, region=NULL, method=lm, ...){

@@ -129,7 +129,7 @@
 ##' 
 ##' @example Rd_examples/Ex_predict_STmodel.R
 ##' 
-##' @author Johan Lindstrom
+##' @author Johan Lindstr?m
 ##' 
 ##' @family STmodel methods
 ##' @family predictSTmodel methods
@@ -141,6 +141,11 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
                             pred.covar=FALSE, beta.covar=FALSE,
                             combine.data=FALSE, type="p", LTA=FALSE, 
                             transform=c("none","unbiased","mspe"), ...){
+
+
+    if(is.null(object$trend$date)){
+      stop("Trend within model object (object$trend) must contain more than 0 dates.")} 
+
 ##################################
 ### INITIAL SETUP AND CHECKING ###
   ##check class belongings
@@ -251,7 +256,7 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
       }
       ##and fix the trend (right no of trends, names and dates)
       suppressMessages(STdata <- updateTrend(STdata, fnc=object$trend.fnc,
-                                             extra.dates=STdata$trend$date))
+                                             extra.dates=object$trend$date))
       
       ##since we're not using covariances for the prediction locations
       ##(specified seperately in nugget.unobs), we just pick a simple covariance
@@ -263,7 +268,7 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
                               cov.beta=object$cov.beta, cov.nu=cov.nu,
                               locations=object$locations.list,
                               scale=!is.null(object$scale.covars),
-                              scale.covars=object$scale.covars)
+                              scale.covars=object$scale.covars,calc_dist_matrix=FALSE)
     }else{
       ##STdata is an STmodel object ->
       ##test for consistent covariates and scaling (only equal scaling allowed).
@@ -359,7 +364,7 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
     Fobs <- expandF(object$F, object$obs$idx, n.loc=dimensions$n.obs)
   
     ##Create the Xtilde = [M FX] matrix
-    Xtilde <- as.matrix( Fobs %*% bdiag(object$LUR) )
+    Xtilde <- as.matrix( Fobs %*% Matrix::bdiag(object$LUR) )
     ##Add the spatio-temporal covariate (if it exists)
     if( dimensions$L!=0 ){
       Xtilde <- cbind(object$ST, Xtilde)
@@ -568,7 +573,7 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
   ##extract sparse matrices
   Funobs <- expandF(Funobs, idx.unobs, n.loc=N.unobs)
   ##compute LUR times the temporal trends [M F*X] for unobserved
-  Xtilde.unobs <- as.matrix( Funobs %*% bdiag(STdata$LUR.all) )
+  Xtilde.unobs <- as.matrix( Funobs %*% Matrix::bdiag(STdata$LUR.all) )
   if( dimensions$L!=0 ){
     Xtilde.unobs <- cbind(ST.unobs, Xtilde.unobs)
   }
@@ -577,7 +582,7 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
 ### COMPUTE BETA FIELDS ###
   ##compute LUR*alpha (mean values for the beta fields)
   out$beta <- list()
-  out$beta$mu <- matrix(bdiag(STdata$LUR.all) %*% out$pars$alpha.E,
+  out$beta$mu <- matrix(Matrix::bdiag(STdata$LUR.all) %*% out$pars$alpha.E,
                         ncol=length(STdata$LUR.all))
   colnames(out$beta$mu) <- names(STdata$LUR.all)
   rownames(out$beta$mu) <- rownames( STdata$LUR.all[[1]] )
@@ -615,7 +620,7 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
 
     ##contribution from REML estimate
     if( out$opts$type=="r" ){
-      var.beta.REML <- (cBind(rep(0,dimensions$L), bdiag(STdata$LUR.all)) -
+      var.beta.REML <- (cBind(rep(0,dimensions$L), Matrix::bdiag(STdata$LUR.all)) -
                         sigma.B.C %*% (t(Fobs)%*%iSoo.Xtilde))
       var.beta.REML <- as.matrix(var.beta.REML)
       if( out$opts$beta.covar ){
@@ -732,8 +737,6 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
   ##cross distance for the nu coordinates
   cross.D.nu <- crossDist(loc.unobs.nu, loc.obs.nu)
 
-  ## sigma.B.C * F'
-  sigma.B.C.tF <- sigma.B.C %*% t(Fobs)
   
   ##now we need to split the conditional expectation into parts to
   ##reduce the memory footprint
@@ -758,7 +761,8 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
     T1.order <- order(T1.Ind)
     
     ##create full cross-covariance matrix for all the observations
-    sigma.B.full.C <- as.matrix(Funobs[Ind,,drop=FALSE] %*% sigma.B.C.tF)
+    sigma.B.full.C <- Funobs[Ind,,drop=FALSE] %*% sigma.B.C
+    sigma.B.full.C <- t(as.matrix(Fobs%*%t(sigma.B.full.C)))
     ##parameter order is sill, nugget, range (always predict with nugget=0)
     sigma.nu.C <- makeSigmaNu(cov.pars.nu$pars, dist = cross.D.nu,
                               type = object$cov.nu$covf, nugget = 0,
@@ -1018,7 +1022,7 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
 ##' @param ... Ignored additional arguments.
 ##' @return Nothing
 ##'
-##' @author Johan Lindstrom
+##' @author Johan Lindstr?m
 ##'
 ##' @examples
 ##'   ##load data
@@ -1027,7 +1031,6 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
 ##'   
 ##' 
 ##' @family predictSTmodel methods
-##' @importFrom utils str
 ##' @method print predictSTmodel
 ##' @export
 print.predictSTmodel <- function(x, ...){
@@ -1157,7 +1160,7 @@ print.predictSTmodel <- function(x, ...){
 ##'
 ##' @example Rd_examples/Ex_plot_predictSTmodel.R
 ##'
-##' @author Johan Lindstrom
+##' @author Johan Lindstr?m
 ##' 
 ##' @family predictSTmodel methods
 ##' @method plot predictSTmodel

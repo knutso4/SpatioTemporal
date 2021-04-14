@@ -34,7 +34,7 @@
 ##' 
 ##' @example Rd_examples/Ex_loglikeST.R
 ##'
-##' @author Johan Lindstrom
+##' @author Johan Lindström
 ##' 
 ##' @family STmodel functions
 ##' @family likelihood functions
@@ -274,7 +274,7 @@ loglikeSTnaive <- function(x=NULL, STmodel, type="p", x.fixed=NULL){
   ##extract the observations
   Y <- STmodel$obs$obs
   ##extract sparse matrices
-  LUR <- bdiag(STmodel$LUR)
+  LUR <- Matrix::bdiag(STmodel$LUR)
   F <- expandF(STmodel$F, STmodel$obs$idx, n.loc=dimensions$n.obs)
   if( type=="f" ){
     ##subtract mean value from observations

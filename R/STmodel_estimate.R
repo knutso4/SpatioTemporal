@@ -103,10 +103,9 @@
 ##' 
 ##' @example Rd_examples/Ex_estimate_STmodel.R
 ##' 
-##' @author Johan Lindstrom
+##' @author Johan Lindström
 ##' @family STmodel methods
 ##' @family estimateSTmodel methods
-##' @importFrom stats optim
 ##' @method estimate STmodel
 ##' @export
 estimate.STmodel <- function(object, x, x.fixed=NULL, type="p",
@@ -159,6 +158,13 @@ estimate.STmodel <- function(object, x, x.fixed=NULL, type="p",
                 err[[1]]) )
   }
   
+  #############
+  # J. Keller edit
+  # Define local version of the likelihood function, to use in calculating
+  # Hessians using numDeriv package
+  loglikeST.loc <- function(x) loglikeST(x, object)
+  ############
+  
   ##ensure that we are doing maximisation
   control$fnscale <- -1
   ##loop over starting values
@@ -172,14 +178,11 @@ estimate.STmodel <- function(object, x, x.fixed=NULL, type="p",
     while(i.restart<=restart && !conv[i]){
       try( res[[i]] <- optim(x.start, loglikeST, gr=loglikeSTGrad.loc,
                              STmodel=object, type=type, x.fixed=x.fixed,
-                             method=method, control=control, hessian=TRUE,
+                             method=method, control=control, hessian=FALSE,
                              lower=lower, upper=upper), silent=TRUE)
       if( all( !is.na(res[[i]]) ) ){
         ##optim done, let's see if we've converged and update starting point
         x.start <- res[[i]]$par
-        ##compute convergence criteria
-        conv[i] <- (res[[i]]$convergence==0 &&
-                    all(eigen(res[[i]]$hessian)$value < -1e-10))
       }else{
         ##error occured in optim, break
         break
@@ -187,6 +190,25 @@ estimate.STmodel <- function(object, x, x.fixed=NULL, type="p",
       ##increase counter
       i.restart <- i.restart+1
     }##while(i.restart<=restart && !optim.done)
+	
+	# Calculate Hessian using numDeriv package
+    #############
+	# J. Keller edit
+    res[[i]]$hessian <- numDeriv::hessian(loglikeST.loc, res[[i]]$par)
+    ###############	
+	
+	##compute convergence criteria
+        conv[i] <- (res[[i]]$convergence==0 &&
+                    all(eigen(res[[i]]$hessian)$value < -1e-10))
+	
+	
+	##add standard deviations
+	  par.sd <- sqrt(-diag(tryCatch(solve(res[[i]]$hessian), error=function(e) rep(NA, length(res[[i]]$par)))))
+	if(!is.numeric(par.sd)){
+	  conv[i] <- FALSE
+	  message("Hessian not positive definite -- trying next starting value.")
+	  next
+	}
     if( control$trace!=0 ){
       message("") ##spacing
     }
@@ -207,8 +229,6 @@ estimate.STmodel <- function(object, x, x.fixed=NULL, type="p",
                                      init=double(dimensions$nparam),
                                      tstat=double(dimensions$nparam))
      
-      ##add standard deviations
-      suppressWarnings( par.sd <- sqrt(-diag(solve(res[[i]]$hessian))) )
       ##initial value
       if( type!="f" ){
         par.type <- "par.cov"
@@ -320,7 +340,7 @@ estimate.STmodel <- function(object, x, x.fixed=NULL, type="p",
 ##' @param ... Ignored additional arguments.
 ##' @return Nothing
 ##'
-##' @author Johan Lindstrom
+##' @author Johan Lindström
 ##'
 ##' @examples
 ##'   ##load data
@@ -385,7 +405,7 @@ print.estimateSTmodel <- function(x, ...){
 ##' @param ... Ignored additional arguments.
 ##' @return Estimated parameters.
 ##'
-##' @author Johan Lindstrom
+##' @author Johan Lindström
 ##'
 ##' @examples
 ##'   ##load data

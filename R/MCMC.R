@@ -71,11 +71,9 @@
 ##' 
 ##' @example Rd_examples/Ex_MCMC_mesa_model.R
 ##' 
-##' @author Johan Lindstrom
+##' @author Johan Lindström
 ##' @family STmodel methods
 ##' @family mcmcSTmodel methods
-##' @importFrom stats rnorm
-##' @importFrom stats runif
 ##' @method MCMC STmodel
 ##' @export
 MCMC.STmodel <- function(object, x, x.fixed=NULL, type="f", N=1000,
@@ -196,7 +194,7 @@ MCMC <- function(object, ...){
 ##'   data(MCMC.mesa.model)
 ##'   print(MCMC.mesa.model)
 ##' 
-##' @author Johan Lindstrom
+##' @author Johan Lindström
 ##'
 ##' @family mcmcSTmodel methods
 ##' @method print mcmcSTmodel
@@ -239,7 +237,7 @@ print.mcmcSTmodel <- function(x, ...){
 ##'   data(MCMC.mesa.model)
 ##'   summary(MCMC.mesa.model)
 ##' 
-##' @author Johan Lindstrom
+##' @author Johan Lindström
 ##' 
 ##' @family mcmcSTmodel methods
 ##' @method summary mcmcSTmodel
@@ -279,7 +277,7 @@ summary.mcmcSTmodel <- function(object, burnIn=0, ...){
 ##'   \code{\link[base:print]{print.table}}.
 ##' @return Nothing
 ##'
-##' @author Johan Lindstrom
+##' @author Johan Lindström
 ##' 
 ##' @family mcmcSTmodel methods
 ##' @method print summary.mcmcSTmodel
@@ -327,9 +325,8 @@ print.summary.mcmcSTmodel <- function(x, ...){
 ##'
 ##' @example Rd_examples/Ex_plot_mcmcSTmodel.R
 ##' 
-##' @author Johan Lindstrom
+##' @author Johan Lindström
 ##' 
-##' @importFrom graphics lines
 ##' @family mcmcSTmodel methods
 ##' @method plot mcmcSTmodel
 ##' @export
@@ -397,7 +394,7 @@ plot.mcmcSTmodel <- function(x, y="like", add=FALSE, main=NULL, ...){
 ##'
 ##' @example Rd_examples/Ex_density_mcmcSTmodel.R
 ##' 
-##' @author Johan Lindstrom
+##' @author Johan Lindström
 ##' 
 ##' @family mcmcSTmodel methods
 ##' @importFrom stats density
@@ -467,11 +464,9 @@ density.mcmcSTmodel <- function(x, BurnIn=0, estSTmodel=NULL, ...){
 ##'
 ##' @example Rd_examples/Ex_density_mcmcSTmodel.R
 ##' 
-##' @author Johan Lindstrom
+##' @author Johan Lindström
 ##' 
 ##' @family mcmcSTmodel methods
-##' @importFrom stats dnorm
-##' @importFrom graphics lines
 ##' @method plot density.mcmcSTmodel
 ##' @export
 plot.density.mcmcSTmodel <- function(x, y=1, add=FALSE, norm.col=0,

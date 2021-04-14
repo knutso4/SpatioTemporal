@@ -38,7 +38,7 @@
 ##' ##compute dimensions for the data structure
 ##' loglikeSTdim(mesa.model)
 ##'
-##' @author Johan Lindstrom
+##' @author Johan Lindström
 ##' 
 ##' @family STmodel functions
 ##' @family likelihood utility functions
@@ -103,7 +103,7 @@ loglikeSTdim <- function(STmodel){
 ##' ##...and for only the covariance parameters.
 ##' loglikeSTnames(mesa.model, FALSE)
 ##'
-##' @author Johan Lindstrom
+##' @author Johan Lindström
 ##' 
 ##' @family likelihood utility functions
 ##' @export
@@ -173,7 +173,7 @@ loglikeSTnames <- function(STmodel, all=TRUE){
 ##'
 ##' @example Rd_examples/Ex_loglikeSTgetPars.R
 ##' 
-##' @author Johan Lindstrom
+##' @author Johan Lindström
 ##' 
 ##' @family likelihood utility functions
 ##' @export

@@ -56,11 +56,12 @@
 ##' 
 ##' @example Rd_examples/Ex_makeCholBlock.R
 ##' 
-##' @author Johan Lindstrom and Adam Szpiro
+##' @author Johan Lindström and Adam Szpiro
 ##' 
 ##' @family basic linear algebra
 ##' @family block matrix functions
 ##' @export
+##' @useDynLib SpatioTemporal C_make_chol_block
 makeCholBlock <- function(mat, n.blocks=1,
                           block.sizes=rep(dim(mat)[1]/n.blocks,n.blocks)){
   ##special case for one block
@@ -70,8 +71,7 @@ makeCholBlock <- function(mat, n.blocks=1,
   ##ensure that block sizes are integer valued
   block.sizes <- round(block.sizes)
   ##call the c-function
-  tmp <- .Call(C_make_chol_block, as.integer(block.sizes), mat,
-               PACKAGE="SpatioTemporal")
+  tmp <- .Call(C_make_chol_block, as.integer(block.sizes), mat)
   ##check if matrix is pos.def
   if( tmp[1]==-1 ){
     stop("In 'makeCholBlock': Matrix not positive definite.")
@@ -81,6 +81,7 @@ makeCholBlock <- function(mat, n.blocks=1,
 
 ##' @rdname makeCholBlock
 ##' @export
+##' @useDynLib SpatioTemporal C_inv_chol_block
 invCholBlock <- function(R, n.blocks=1,
                          block.sizes=rep(dim(R)[1]/n.blocks,n.blocks)){
   ##special case for one block
@@ -91,8 +92,7 @@ invCholBlock <- function(R, n.blocks=1,
   block.sizes <- round(block.sizes)
   
   ##call the c-function, error checking in C-code.
-  .Call(C_inv_chol_block, as.integer(block.sizes), R,
-        PACKAGE="SpatioTemporal")
+  .Call(C_inv_chol_block, as.integer(block.sizes), R)
 }##function invCholBlock
 
 ##' @param B Vector or matrix containg the right hand side of the equations
@@ -101,6 +101,7 @@ invCholBlock <- function(R, n.blocks=1,
 ##'   Controls if we solve the equations system given by R*x = B or R'*x=B.
 ##' @rdname makeCholBlock
 ##' @export
+##' @useDynLib SpatioTemporal C_solve_tri_block
 solveTriBlock <- function(R, B, n.blocks=1,
                           block.sizes=rep(dim(R)[1]/n.blocks,n.blocks),
                           transpose=FALSE){
@@ -113,7 +114,7 @@ solveTriBlock <- function(R, B, n.blocks=1,
   }else{
     ##call the c-function, error checking in C-code.
     .Call(C_solve_tri_block, as.integer(block.sizes),
-          as.integer(transpose), R, B, PACKAGE="SpatioTemporal")
+          as.integer(transpose), R, B)
   }
 }##function solveTriBlock
 
@@ -133,17 +134,17 @@ solveTriBlock <- function(R, B, n.blocks=1,
 ##' 
 ##' @example Rd_examples/Ex_blockMult.R
 ##' 
-##' @author Johan Lindstrom
+##' @author Johan Lindström
 ##' @family basic linear algebra
 ##' @family block matrix functions
 ##' @export
+##' @useDynLib SpatioTemporal C_block_mult
 blockMult <- function(mat, X, n.blocks=1,
                        block.sizes=rep(dim(mat)[1]/n.blocks,n.blocks)){
   ##ensure that block sizes are integer valued
   block.sizes <- round(block.sizes)
   ##call the c-function, error checking in C-code.
-  .Call(C_block_mult, as.integer(block.sizes), mat, X,
-        PACKAGE="SpatioTemporal")
+  .Call(C_block_mult, as.integer(block.sizes), mat, X)
 }##function blockMult
 
 ##' Computes the sum of the logarithm of the diagonal elements in a matrix, or
@@ -157,29 +158,32 @@ blockMult <- function(mat, X, n.blocks=1,
 ##' 
 ##' @example Rd_examples/Ex_sumLogDiag.R
 ##' 
-##' @author Johan Lindstrom
+##' @author Johan Lindström
 ##' @family basic linear algebra
 ##' @export
+##' @useDynLib SpatioTemporal C_sum_log_diag
 sumLogDiag <- function(mat){
   ##call the c-function, error checking in C-code.
-  .Call(C_sum_log_diag, mat, PACKAGE="SpatioTemporal")
+  .Call(C_sum_log_diag, mat)
 }##function sumLogDiag
 
 ##' @rdname sumLogDiag
 ##' @param v A vector
 ##' @export
+##' @useDynLib SpatioTemporal C_sum_log
 sumLog <- function(v){
   ##call the c-function, error checking in C-code.
-  .Call(C_sum_log, v, PACKAGE="SpatioTemporal")
+  .Call(C_sum_log, v)
 }##function sumLog
 
 
 ##' @rdname dotProd
 ##' @export
+##' @useDynLib SpatioTemporal C_norm2
 norm2 <- function(v1){
   ##calculate sum of the squared elements of a vector (or matrix) (|x|^2)
   ##input vector and vector size
-  .Call(C_norm2, v1, PACKAGE="SpatioTemporal")
+  .Call(C_norm2, v1)
 }##function norm2
 
 ##' \code{dotProd} computes the inner (or dot/scalar) product between two
@@ -199,13 +203,14 @@ norm2 <- function(v1){
 ##' 
 ##' @example Rd_examples/Ex_dotProd.R
 ##' 
-##' @author Johan Lindstrom
+##' @author Johan Lindström
 ##' @family basic linear algebra
 ##' @export
+##' @useDynLib SpatioTemporal C_dotProd
 dotProd <- function(v1,v2){
   if(length(v1)!=length(v2)){
     warning("In 'dotProd': vectors of unequal length, truncating the longer vector")
   }
   ##no need to check dimensions
-  .Call(C_dotProd, v1, v2, PACKAGE="SpatioTemporal")
+  .Call(C_dotProd, v1, v2)
 }##function dotProd
