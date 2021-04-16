@@ -1,0 +1,1320 @@
+[
+    {
+        "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+        "file_last_write": 1593358531.0,
+        "definitions": [
+            {
+                "usr": "c:@F@select_covf#&1$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "select_covf(const std::string &)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 43,
+                "column": 31
+            },
+            {
+                "usr": "c:@F@list_covf#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "list_covf",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 51,
+                "column": 26
+            },
+            {
+                "usr": "c:@S@covf_functor@F@diff_#&1I#1",
+                "kind": 7,
+                "parent_name": "covf_functor",
+                "name": "diff_(const int &)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 66,
+                "column": 51
+            },
+            {
+                "usr": "c:@S@covf_functor@F@check#I#1",
+                "kind": 7,
+                "parent_name": "covf_functor",
+                "name": "check(Eigen::Index)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 91,
+                "column": 20
+            },
+            {
+                "usr": "c:@S@covf_functor@F@checkRcpp#I#1",
+                "kind": 7,
+                "parent_name": "covf_functor",
+                "name": "checkRcpp(Eigen::Index)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 94,
+                "column": 20
+            },
+            {
+                "usr": "c:@S@covf_functor@F@operator()#&1I#S0_#",
+                "kind": 7,
+                "parent_name": "covf_functor",
+                "name": "operator(const int &, const int &)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 101,
+                "column": 31
+            },
+            {
+                "usr": "c:@S@covf_functor0@F@nPars#1",
+                "kind": 7,
+                "parent_name": "covf_functor0",
+                "name": "nPars",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 107,
+                "column": 29
+            },
+            {
+                "usr": "c:@S@covf_functor0@F@namesPars#1",
+                "kind": 7,
+                "parent_name": "covf_functor0",
+                "name": "namesPars",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 110,
+                "column": 43
+            },
+            {
+                "usr": "c:@S@covf_functor2@F@nPars#1",
+                "kind": 7,
+                "parent_name": "covf_functor2",
+                "name": "nPars",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 115,
+                "column": 29
+            },
+            {
+                "usr": "c:@S@covf_functor2@F@namesPars#1",
+                "kind": 7,
+                "parent_name": "covf_functor2",
+                "name": "namesPars",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 118,
+                "column": 43
+            },
+            {
+                "usr": "c:@S@covf_functor3@F@nPars#1",
+                "kind": 7,
+                "parent_name": "covf_functor3",
+                "name": "nPars",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 123,
+                "column": 29
+            },
+            {
+                "usr": "c:@S@covf_functor3@F@namesPars#1",
+                "kind": 7,
+                "parent_name": "covf_functor3",
+                "name": "namesPars",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 126,
+                "column": 43
+            },
+            {
+                "usr": "c:@F@r_exp_diff_r#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_exp_diff_r(double)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 132,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@r_exp_diff_rr#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_exp_diff_rr(double)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 134,
+                "column": 8
+            },
+            {
+                "usr": "c:@S@covf_exp_functor@F@operator()#&1I#S0_#S0_#",
+                "kind": 7,
+                "parent_name": "covf_exp_functor",
+                "name": "operator(const int &, const int &, const int &)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 137,
+                "column": 35
+            },
+            {
+                "usr": "c:@F@r_exp2_diff_rr#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_exp2_diff_rr(double)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 182,
+                "column": 8
+            },
+            {
+                "usr": "c:@S@covf_exp2_functor@F@operator()#&1I#S0_#S0_#",
+                "kind": 7,
+                "parent_name": "covf_exp2_functor",
+                "name": "operator(const int &, const int &, const int &)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 185,
+                "column": 36
+            },
+            {
+                "usr": "c:@F@r_cubic#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_cubic(double)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 231,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@r_cubic_diff_r#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_cubic_diff_r(double)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 235,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@r_cubic_diff_rr#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_cubic_diff_rr(double)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 239,
+                "column": 8
+            },
+            {
+                "usr": "c:@S@covf_cubic_functor@F@operator()#&1I#S0_#S0_#",
+                "kind": 7,
+                "parent_name": "covf_cubic_functor",
+                "name": "operator(const int &, const int &, const int &)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 244,
+                "column": 37
+            },
+            {
+                "usr": "c:@F@r_spherical#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_spherical(double)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 289,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@r_spherical_diff_r#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_spherical_diff_r(double)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 291,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@r_spherical_diff_rr#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_spherical_diff_rr(double)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 293,
+                "column": 8
+            },
+            {
+                "usr": "c:@S@covf_spherical_functor@F@operator()#&1I#S0_#S0_#",
+                "kind": 7,
+                "parent_name": "covf_spherical_functor",
+                "name": "operator(const int &, const int &, const int &)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 301,
+                "column": 41
+            },
+            {
+                "usr": "c:@F@r_cauchy#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_cauchy(double, double)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 346,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@r_cauchy_diff_r#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_cauchy_diff_r(double, double)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 350,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@r_cauchy_diff_nu#d#d#i#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_cauchy_diff_nu(double, double, unsigned int)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 354,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@r_cauchy_diff_rr#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_cauchy_diff_rr(double, double)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 358,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@r_cauchy_diff_rnu#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_cauchy_diff_rnu(double, double)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 362,
+                "column": 8
+            },
+            {
+                "usr": "c:@S@covf_cauchy_functor@F@operator()#&1I#S0_#S0_#",
+                "kind": 7,
+                "parent_name": "covf_cauchy_functor",
+                "name": "operator(const int &, const int &, const int &)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 367,
+                "column": 38
+            },
+            {
+                "usr": "c:@F@r_matern#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_matern(double, double)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 432,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@r_matern_diff_r#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_matern_diff_r(double, double)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 436,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@r_matern_diff_rr#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_matern_diff_rr(double, double)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 440,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@r_matern_diff_nu#d#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_matern_diff_nu(double, double, double)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 444,
+                "column": 8
+            },
+            {
+                "usr": "c:@S@covf_matern_functor@F@operator()#&1I#S0_#S0_#",
+                "kind": 7,
+                "parent_name": "covf_matern_functor",
+                "name": "operator(const int &, const int &, const int &)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 452,
+                "column": 38
+            },
+            {
+                "usr": "c:@S@covf_iid_functor@F@operator()#&1I#S0_#S0_#",
+                "kind": 7,
+                "parent_name": "covf_iid_functor",
+                "name": "operator(const int &, const int &, const int &)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.cpp",
+                "line": 521,
+                "column": 35
+            }
+        ]
+    },
+    {
+        "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.h",
+        "file_last_write": 1533979580.0,
+        "definitions": [
+            {
+                "usr": "c:@S@covf_functor",
+                "kind": 2,
+                "parent_name": "",
+                "name": "covf_functor",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.h",
+                "line": 11,
+                "column": 7
+            },
+            {
+                "usr": "c:@S@covf_functor0",
+                "kind": 2,
+                "parent_name": "",
+                "name": "covf_functor0",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.h",
+                "line": 40,
+                "column": 7
+            },
+            {
+                "usr": "c:@S@covf_functor2",
+                "kind": 2,
+                "parent_name": "",
+                "name": "covf_functor2",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.h",
+                "line": 51,
+                "column": 7
+            },
+            {
+                "usr": "c:@S@covf_functor3",
+                "kind": 2,
+                "parent_name": "",
+                "name": "covf_functor3",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.h",
+                "line": 62,
+                "column": 7
+            },
+            {
+                "usr": "c:@S@covf_exp_functor",
+                "kind": 2,
+                "parent_name": "",
+                "name": "covf_exp_functor",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.h",
+                "line": 85,
+                "column": 7
+            },
+            {
+                "usr": "c:@S@covf_exp2_functor",
+                "kind": 2,
+                "parent_name": "",
+                "name": "covf_exp2_functor",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.h",
+                "line": 92,
+                "column": 7
+            },
+            {
+                "usr": "c:@S@covf_cubic_functor",
+                "kind": 2,
+                "parent_name": "",
+                "name": "covf_cubic_functor",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.h",
+                "line": 99,
+                "column": 7
+            },
+            {
+                "usr": "c:@S@covf_spherical_functor",
+                "kind": 2,
+                "parent_name": "",
+                "name": "covf_spherical_functor",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.h",
+                "line": 106,
+                "column": 7
+            },
+            {
+                "usr": "c:@S@covf_cauchy_functor",
+                "kind": 2,
+                "parent_name": "",
+                "name": "covf_cauchy_functor",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.h",
+                "line": 113,
+                "column": 7
+            },
+            {
+                "usr": "c:@S@covf_matern_functor",
+                "kind": 2,
+                "parent_name": "",
+                "name": "covf_matern_functor",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.h",
+                "line": 120,
+                "column": 7
+            },
+            {
+                "usr": "c:@S@covf_iid_functor",
+                "kind": 2,
+                "parent_name": "",
+                "name": "covf_iid_functor",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf.h",
+                "line": 127,
+                "column": 7
+            }
+        ]
+    },
+    {
+        "file": "D:/SpatioTemporal/SpatioTemporal/src/covf_R.cpp",
+        "file_last_write": 1533979580.0,
+        "definitions": [
+            {
+                "usr": "c:@F@parsCovFuns_cpp#&1$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "parsCovFuns_cpp(const std::string &)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf_R.cpp",
+                "line": 7,
+                "column": 26
+            },
+            {
+                "usr": "c:@F@namesCovFuns#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "namesCovFuns",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf_R.cpp",
+                "line": 61,
+                "column": 26
+            },
+            {
+                "usr": "c:@F@evalCovFuns_cpp#&1$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#&1I#S4_#S4_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "evalCovFuns_cpp(const std::string &, const int &, const int &, const int &)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/covf_R.cpp",
+                "line": 66,
+                "column": 17
+            }
+        ]
+    },
+    {
+        "file": "D:/SpatioTemporal/SpatioTemporal/src/crossDist.cpp",
+        "file_last_write": 1533979580.0,
+        "definitions": [
+            {
+                "usr": "c:@F@dist_Cpp#&1$@N@Eigen@S@Map>#I#VI0#$@N@Eigen@S@Stride>#VI0#VI0#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "dist_Cpp(const Eigen::Map<Eigen::MatrixXd> &)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/crossDist.cpp",
+                "line": 5,
+                "column": 17
+            },
+            {
+                "usr": "c:@F@crossDist_Cpp#&1$@N@Eigen@S@Map>#I#VI0#$@N@Eigen@S@Stride>#VI0#VI0#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "crossDist_Cpp(const Eigen::Map<Eigen::MatrixXd> &, const Eigen::Map<Eigen::MatrixXd> &)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/crossDist.cpp",
+                "line": 23,
+                "column": 17
+            }
+        ]
+    },
+    {
+        "file": "D:/SpatioTemporal/SpatioTemporal/src/expand_F.cpp",
+        "file_last_write": 1592853137.0,
+        "definitions": [
+            {
+                "usr": "c:@F@expandF_cpp#&1$@N@Eigen@S@Map>#I#VI0#$@N@Eigen@S@Stride>#VI0#VI0#S0_#I#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "expandF_cpp(const Eigen::Map<Eigen::MatrixXd> &, const Eigen::Map<Eigen::VectorXi> &, int)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/expand_F.cpp",
+                "line": 6,
+                "column": 29
+            }
+        ]
+    },
+    {
+        "file": "D:/SpatioTemporal/SpatioTemporal/src/loglikeST_R.cpp",
+        "file_last_write": 1592857658.0,
+        "definitions": [
+            {
+                "usr": "c:@F@getWallTime#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "getWallTime",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/loglikeST_R.cpp",
+                "line": 27,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@loglikeST_cpp#&1I#S0_#C#S0_#S0_#S0_#S0_#&1$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#S0_#S0_#S0_#S0_#S0_#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "loglikeST_cpp(const int &, const int &, char, const int &, const int &, const int &, const int &, const std::string &, const int &, const int &, const int &, const int &, const int &, const int &)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/loglikeST_R.cpp",
+                "line": 36,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@loglikeSTnaive_cpp#&1I#S0_#C#S0_#S0_#S0_#S0_#&1$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#S0_#S0_#S0_#S0_#S0_#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "loglikeSTnaive_cpp(const int &, const int &, char, const int &, const int &, const int &, const int &, const std::string &, const int &, const int &, const int &, const int &, const int &, const int &)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/loglikeST_R.cpp",
+                "line": 118,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@loglikeST_test_cpp#&1I#S0_#C#S0_#S0_#S0_#S0_#&1$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#S0_#S0_#S0_#S0_#S0_#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "loglikeST_test_cpp(const int &, const int &, char, const int &, const int &, const int &, const int &, const std::string &, const int &, const int &, const int &, const int &, const int &, const int &)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/loglikeST_R.cpp",
+                "line": 208,
+                "column": 17
+            }
+        ]
+    },
+    {
+        "file": "D:/SpatioTemporal/SpatioTemporal/src/loglikeST_R.h",
+        "file_last_write": 1583174579.0,
+        "definitions": []
+    },
+    {
+        "file": "D:/SpatioTemporal/SpatioTemporal/src/loglikeST_helper.cpp",
+        "file_last_write": 1583175064.0,
+        "definitions": [
+            {
+                "usr": "c:@F@loglikeST_checkSize#&1I#S0_#C#S0_#S0_#S0_#S0_#S0_#S0_#S0_#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "loglikeST_checkSize(const int &, const int &, char, const int &, const int &, const int &, const int &, const int &, const int &, const int &, const int &)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/loglikeST_helper.cpp",
+                "line": 4,
+                "column": 6
+            },
+            {
+                "usr": "c:@F@loglikeST_fix_x#&1I#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "loglikeST_fix_x(const int &, const int &)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/loglikeST_helper.cpp",
+                "line": 53,
+                "column": 17
+            },
+            {
+                "usr": "c:@F@loglikeST_getPars#&1I#C#S0_#S0_#S0_#S0_#&I#S1_#S1_#S1_#S1_#&d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "loglikeST_getPars(const int &, char, const int &, const int &, const int &, const int &, Eigen::VectorXd &, Eigen::VectorXd &, Eigen::VectorXd &, Eigen::VectorXd &, Eigen::VectorXd &, double &)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/loglikeST_helper.cpp",
+                "line": 72,
+                "column": 6
+            }
+        ]
+    },
+    {
+        "file": "D:/SpatioTemporal/SpatioTemporal/src/loglikeST_helper.h",
+        "file_last_write": 1592854795.0,
+        "definitions": []
+    },
+    {
+        "file": "D:/SpatioTemporal/SpatioTemporal/src/makeSigma.cpp",
+        "file_last_write": 1533979580.0,
+        "definitions": [
+            {
+                "usr": "c:@F@makeSigmaB#&1I#S0_#S0_#S0_#b#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "makeSigmaB(const int &, const int &, const int &, const int &, bool, const int &)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/makeSigma.cpp",
+                "line": 4,
+                "column": 29
+            },
+            {
+                "usr": "c:@F@makeSigmaNu#&1I#S0_#&1$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#S0_#d#b#S0_#S0_#S0_#S0_#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "makeSigmaNu(const int &, const int &, const std::string &, const int &, double, bool, const int &, const int &, const int &, const int &, const int &)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/makeSigma.cpp",
+                "line": 75,
+                "column": 29
+            }
+        ]
+    },
+    {
+        "file": "D:/SpatioTemporal/SpatioTemporal/src/makeSigma.h",
+        "file_last_write": 1533979580.0,
+        "definitions": []
+    },
+    {
+        "file": "D:/SpatioTemporal/SpatioTemporal/src/makeSigma_R.cpp",
+        "file_last_write": 1533979580.0,
+        "definitions": [
+            {
+                "usr": "c:@F@makeSigmaB_cpp#&1$@N@Eigen@S@Map>#I#VI0#$@N@Eigen@S@Stride>#VI0#VI0#S0_#&1$@N@std@N@__1@S@vector>#$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#$@N@std@N@__1@S@allocator>#S5_#S0_#b#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "makeSigmaB_cpp(const Eigen::Map<Eigen::VectorXd> &, const Eigen::Map<Eigen::MatrixXd> &, const std::vector<std::string> &, const Eigen::Map<Eigen::VectorXd> &, bool, const Eigen::Map<Eigen::VectorXi> &)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/makeSigma_R.cpp",
+                "line": 4,
+                "column": 29
+            },
+            {
+                "usr": "c:@F@makeSigmaNu_cpp#&1I#S0_#&1$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#S0_#d#b#S0_#S0_#S0_#S0_#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "makeSigmaNu_cpp(const int &, const int &, const std::string &, const int &, double, bool, const int &, const int &, const int &, const int &, const int &)",
+                "file": "D:/SpatioTemporal/SpatioTemporal/src/makeSigma_R.cpp",
+                "line": 14,
+                "column": 29
+            }
+        ]
+    },
+    {
+        "file": "D:/SpatioTemporal/SpatioTemporal/src/matrix_helper.h",
+        "file_last_write": 1593527418.0,
+        "definitions": []
+    },
+    {
+        "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+        "file_last_write": 1593358531.0,
+        "definitions": [
+            {
+                "usr": "c:@F@select_covf#&1$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "select_covf(const std::string &)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 43,
+                "column": 31
+            },
+            {
+                "usr": "c:@F@list_covf#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "list_covf",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 51,
+                "column": 26
+            },
+            {
+                "usr": "c:@S@covf_functor@F@diff_#&1I#1",
+                "kind": 7,
+                "parent_name": "covf_functor",
+                "name": "diff_(const int &)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 66,
+                "column": 51
+            },
+            {
+                "usr": "c:@S@covf_functor@F@check#I#1",
+                "kind": 7,
+                "parent_name": "covf_functor",
+                "name": "check(Eigen::Index)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 91,
+                "column": 20
+            },
+            {
+                "usr": "c:@S@covf_functor@F@checkRcpp#I#1",
+                "kind": 7,
+                "parent_name": "covf_functor",
+                "name": "checkRcpp(Eigen::Index)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 94,
+                "column": 20
+            },
+            {
+                "usr": "c:@S@covf_functor@F@operator()#&1I#S0_#",
+                "kind": 7,
+                "parent_name": "covf_functor",
+                "name": "operator(const int &, const int &)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 101,
+                "column": 31
+            },
+            {
+                "usr": "c:@S@covf_functor0@F@nPars#1",
+                "kind": 7,
+                "parent_name": "covf_functor0",
+                "name": "nPars",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 107,
+                "column": 29
+            },
+            {
+                "usr": "c:@S@covf_functor0@F@namesPars#1",
+                "kind": 7,
+                "parent_name": "covf_functor0",
+                "name": "namesPars",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 110,
+                "column": 43
+            },
+            {
+                "usr": "c:@S@covf_functor2@F@nPars#1",
+                "kind": 7,
+                "parent_name": "covf_functor2",
+                "name": "nPars",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 115,
+                "column": 29
+            },
+            {
+                "usr": "c:@S@covf_functor2@F@namesPars#1",
+                "kind": 7,
+                "parent_name": "covf_functor2",
+                "name": "namesPars",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 118,
+                "column": 43
+            },
+            {
+                "usr": "c:@S@covf_functor3@F@nPars#1",
+                "kind": 7,
+                "parent_name": "covf_functor3",
+                "name": "nPars",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 123,
+                "column": 29
+            },
+            {
+                "usr": "c:@S@covf_functor3@F@namesPars#1",
+                "kind": 7,
+                "parent_name": "covf_functor3",
+                "name": "namesPars",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 126,
+                "column": 43
+            },
+            {
+                "usr": "c:@F@r_exp_diff_r#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_exp_diff_r(double)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 132,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@r_exp_diff_rr#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_exp_diff_rr(double)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 134,
+                "column": 8
+            },
+            {
+                "usr": "c:@S@covf_exp_functor@F@operator()#&1I#S0_#S0_#",
+                "kind": 7,
+                "parent_name": "covf_exp_functor",
+                "name": "operator(const int &, const int &, const int &)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 137,
+                "column": 35
+            },
+            {
+                "usr": "c:@F@r_exp2_diff_rr#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_exp2_diff_rr(double)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 182,
+                "column": 8
+            },
+            {
+                "usr": "c:@S@covf_exp2_functor@F@operator()#&1I#S0_#S0_#",
+                "kind": 7,
+                "parent_name": "covf_exp2_functor",
+                "name": "operator(const int &, const int &, const int &)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 185,
+                "column": 36
+            },
+            {
+                "usr": "c:@F@r_cubic#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_cubic(double)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 231,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@r_cubic_diff_r#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_cubic_diff_r(double)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 235,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@r_cubic_diff_rr#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_cubic_diff_rr(double)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 239,
+                "column": 8
+            },
+            {
+                "usr": "c:@S@covf_cubic_functor@F@operator()#&1I#S0_#S0_#",
+                "kind": 7,
+                "parent_name": "covf_cubic_functor",
+                "name": "operator(const int &, const int &, const int &)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 244,
+                "column": 37
+            },
+            {
+                "usr": "c:@F@r_spherical#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_spherical(double)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 289,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@r_spherical_diff_r#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_spherical_diff_r(double)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 291,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@r_spherical_diff_rr#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_spherical_diff_rr(double)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 293,
+                "column": 8
+            },
+            {
+                "usr": "c:@S@covf_spherical_functor@F@operator()#&1I#S0_#S0_#",
+                "kind": 7,
+                "parent_name": "covf_spherical_functor",
+                "name": "operator(const int &, const int &, const int &)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 301,
+                "column": 41
+            },
+            {
+                "usr": "c:@F@r_cauchy#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_cauchy(double, double)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 346,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@r_cauchy_diff_r#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_cauchy_diff_r(double, double)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 350,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@r_cauchy_diff_nu#d#d#i#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_cauchy_diff_nu(double, double, unsigned int)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 354,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@r_cauchy_diff_rr#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_cauchy_diff_rr(double, double)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 358,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@r_cauchy_diff_rnu#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_cauchy_diff_rnu(double, double)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 362,
+                "column": 8
+            },
+            {
+                "usr": "c:@S@covf_cauchy_functor@F@operator()#&1I#S0_#S0_#",
+                "kind": 7,
+                "parent_name": "covf_cauchy_functor",
+                "name": "operator(const int &, const int &, const int &)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 367,
+                "column": 38
+            },
+            {
+                "usr": "c:@F@r_matern#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_matern(double, double)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 432,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@r_matern_diff_r#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_matern_diff_r(double, double)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 436,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@r_matern_diff_rr#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_matern_diff_rr(double, double)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 440,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@r_matern_diff_nu#d#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_matern_diff_nu(double, double, double)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 444,
+                "column": 8
+            },
+            {
+                "usr": "c:@S@covf_matern_functor@F@operator()#&1I#S0_#S0_#",
+                "kind": 7,
+                "parent_name": "covf_matern_functor",
+                "name": "operator(const int &, const int &, const int &)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 452,
+                "column": 38
+            },
+            {
+                "usr": "c:@S@covf_iid_functor@F@operator()#&1I#S0_#S0_#",
+                "kind": 7,
+                "parent_name": "covf_iid_functor",
+                "name": "operator(const int &, const int &, const int &)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.cpp",
+                "line": 521,
+                "column": 35
+            }
+        ]
+    },
+    {
+        "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.h",
+        "file_last_write": 1533979580.0,
+        "definitions": [
+            {
+                "usr": "c:@S@covf_functor",
+                "kind": 2,
+                "parent_name": "",
+                "name": "covf_functor",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.h",
+                "line": 11,
+                "column": 7
+            },
+            {
+                "usr": "c:@S@covf_functor0",
+                "kind": 2,
+                "parent_name": "",
+                "name": "covf_functor0",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.h",
+                "line": 40,
+                "column": 7
+            },
+            {
+                "usr": "c:@S@covf_functor2",
+                "kind": 2,
+                "parent_name": "",
+                "name": "covf_functor2",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.h",
+                "line": 51,
+                "column": 7
+            },
+            {
+                "usr": "c:@S@covf_functor3",
+                "kind": 2,
+                "parent_name": "",
+                "name": "covf_functor3",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.h",
+                "line": 62,
+                "column": 7
+            },
+            {
+                "usr": "c:@S@covf_exp_functor",
+                "kind": 2,
+                "parent_name": "",
+                "name": "covf_exp_functor",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.h",
+                "line": 85,
+                "column": 7
+            },
+            {
+                "usr": "c:@S@covf_exp2_functor",
+                "kind": 2,
+                "parent_name": "",
+                "name": "covf_exp2_functor",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.h",
+                "line": 92,
+                "column": 7
+            },
+            {
+                "usr": "c:@S@covf_cubic_functor",
+                "kind": 2,
+                "parent_name": "",
+                "name": "covf_cubic_functor",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.h",
+                "line": 99,
+                "column": 7
+            },
+            {
+                "usr": "c:@S@covf_spherical_functor",
+                "kind": 2,
+                "parent_name": "",
+                "name": "covf_spherical_functor",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.h",
+                "line": 106,
+                "column": 7
+            },
+            {
+                "usr": "c:@S@covf_cauchy_functor",
+                "kind": 2,
+                "parent_name": "",
+                "name": "covf_cauchy_functor",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.h",
+                "line": 113,
+                "column": 7
+            },
+            {
+                "usr": "c:@S@covf_matern_functor",
+                "kind": 2,
+                "parent_name": "",
+                "name": "covf_matern_functor",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.h",
+                "line": 120,
+                "column": 7
+            },
+            {
+                "usr": "c:@S@covf_iid_functor",
+                "kind": 2,
+                "parent_name": "",
+                "name": "covf_iid_functor",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf.h",
+                "line": 127,
+                "column": 7
+            }
+        ]
+    },
+    {
+        "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf_R.cpp",
+        "file_last_write": 1533979580.0,
+        "definitions": [
+            {
+                "usr": "c:@F@parsCovFuns_cpp#&1$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "parsCovFuns_cpp(const std::string &)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf_R.cpp",
+                "line": 7,
+                "column": 26
+            },
+            {
+                "usr": "c:@F@namesCovFuns#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "namesCovFuns",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf_R.cpp",
+                "line": 61,
+                "column": 26
+            },
+            {
+                "usr": "c:@F@evalCovFuns_cpp#&1$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#&1I#S4_#S4_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "evalCovFuns_cpp(const std::string &, const int &, const int &, const int &)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/covf_R.cpp",
+                "line": 66,
+                "column": 17
+            }
+        ]
+    },
+    {
+        "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/crossDist.cpp",
+        "file_last_write": 1533979580.0,
+        "definitions": [
+            {
+                "usr": "c:@F@dist_Cpp#&1I#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "dist_Cpp(const int &)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/crossDist.cpp",
+                "line": 5,
+                "column": 17
+            },
+            {
+                "usr": "c:@F@crossDist_Cpp#&1I#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "crossDist_Cpp(const int &, const int &)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/crossDist.cpp",
+                "line": 23,
+                "column": 17
+            }
+        ]
+    },
+    {
+        "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/expand_F.cpp",
+        "file_last_write": 1592853137.0,
+        "definitions": [
+            {
+                "usr": "c:@F@expandF_cpp#&1$@N@Eigen@S@Map>#I#VI0#$@N@Eigen@S@Stride>#VI0#VI0#S0_#I#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "expandF_cpp(const Eigen::Map<Eigen::MatrixXd> &, const Eigen::Map<Eigen::VectorXi> &, int)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/expand_F.cpp",
+                "line": 6,
+                "column": 29
+            }
+        ]
+    },
+    {
+        "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/loglikeST_R.cpp",
+        "file_last_write": 1592857658.0,
+        "definitions": [
+            {
+                "usr": "c:@F@getWallTime#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "getWallTime",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/loglikeST_R.cpp",
+                "line": 27,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@loglikeST_cpp#&1I#S0_#C#S0_#S0_#S0_#S0_#&1$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#S0_#S0_#S0_#S0_#S0_#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "loglikeST_cpp(const int &, const int &, char, const int &, const int &, const int &, const int &, const std::string &, const int &, const int &, const int &, const int &, const int &, const int &)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/loglikeST_R.cpp",
+                "line": 36,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@loglikeSTnaive_cpp#&1I#S0_#C#S0_#S0_#S0_#S0_#&1$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#S0_#S0_#S0_#S0_#S0_#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "loglikeSTnaive_cpp(const int &, const int &, char, const int &, const int &, const int &, const int &, const std::string &, const int &, const int &, const int &, const int &, const int &, const int &)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/loglikeST_R.cpp",
+                "line": 118,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@loglikeST_test_cpp#&1I#S0_#C#S0_#S0_#S0_#S0_#&1$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#S0_#S0_#S0_#S0_#S0_#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "loglikeST_test_cpp(const int &, const int &, char, const int &, const int &, const int &, const int &, const std::string &, const int &, const int &, const int &, const int &, const int &, const int &)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/loglikeST_R.cpp",
+                "line": 208,
+                "column": 17
+            }
+        ]
+    },
+    {
+        "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/loglikeST_R.h",
+        "file_last_write": 1583174579.0,
+        "definitions": []
+    },
+    {
+        "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/loglikeST_helper.cpp",
+        "file_last_write": 1583175064.0,
+        "definitions": [
+            {
+                "usr": "c:@F@loglikeST_checkSize#&1I#S0_#C#S0_#S0_#S0_#S0_#S0_#S0_#S0_#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "loglikeST_checkSize(const int &, const int &, char, const int &, const int &, const int &, const int &, const int &, const int &, const int &, const int &)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/loglikeST_helper.cpp",
+                "line": 4,
+                "column": 6
+            },
+            {
+                "usr": "c:@F@loglikeST_fix_x#&1I#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "loglikeST_fix_x(const int &, const int &)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/loglikeST_helper.cpp",
+                "line": 53,
+                "column": 17
+            },
+            {
+                "usr": "c:@F@loglikeST_getPars#&1I#C#S0_#S0_#S0_#S0_#&I#S1_#S1_#S1_#S1_#&d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "loglikeST_getPars(const int &, char, const int &, const int &, const int &, const int &, Eigen::VectorXd &, Eigen::VectorXd &, Eigen::VectorXd &, Eigen::VectorXd &, Eigen::VectorXd &, double &)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/loglikeST_helper.cpp",
+                "line": 72,
+                "column": 6
+            }
+        ]
+    },
+    {
+        "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/loglikeST_helper.h",
+        "file_last_write": 1592854795.0,
+        "definitions": []
+    },
+    {
+        "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/makeSigma.cpp",
+        "file_last_write": 1533979580.0,
+        "definitions": [
+            {
+                "usr": "c:@F@makeSigmaB#&1I#S0_#S0_#S0_#b#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "makeSigmaB(const int &, const int &, const int &, const int &, bool, const int &)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/makeSigma.cpp",
+                "line": 4,
+                "column": 29
+            },
+            {
+                "usr": "c:@F@makeSigmaNu#&1I#S0_#&1$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#S0_#d#b#S0_#S0_#S0_#S0_#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "makeSigmaNu(const int &, const int &, const std::string &, const int &, double, bool, const int &, const int &, const int &, const int &, const int &)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/makeSigma.cpp",
+                "line": 75,
+                "column": 29
+            }
+        ]
+    },
+    {
+        "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/makeSigma.h",
+        "file_last_write": 1533979580.0,
+        "definitions": []
+    },
+    {
+        "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/makeSigma_R.cpp",
+        "file_last_write": 1533979580.0,
+        "definitions": [
+            {
+                "usr": "c:@F@makeSigmaB_cpp#&1I#S0_#S0_#S0_#b#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "makeSigmaB_cpp(const int &, const int &, const int &, const int &, bool, const int &)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/makeSigma_R.cpp",
+                "line": 4,
+                "column": 29
+            },
+            {
+                "usr": "c:@F@makeSigmaNu_cpp#&1I#S0_#&1$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#S0_#d#b#S0_#S0_#S0_#S0_#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "makeSigmaNu_cpp(const int &, const int &, const std::string &, const int &, double, bool, const int &, const int &, const int &, const int &, const int &)",
+                "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/makeSigma_R.cpp",
+                "line": 14,
+                "column": 29
+            }
+        ]
+    },
+    {
+        "file": "E:/svn/johanl/Rutils/Packages/SpatioTemporal/src/matrix_helper.h",
+        "file_last_write": 1593527418.0,
+        "definitions": []
+    }
+]
