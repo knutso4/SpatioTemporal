@@ -1,0 +1,218 @@
+##If run directly after creating the package path will be:
+##.../SpatioTemporal/SpatioTemporal
+##Define path to new data (as obtained from createData.r)
+PATH_OUT <- file.path(dirname( getwd() ), 'test.fncs', 'newData')
+
+##load the new data
+load( file.path(PATH_OUT, "est.cv.mesa.RData") )
+load( file.path(PATH_OUT, "est.mesa.model.RData") )
+load( file.path(PATH_OUT, "MCMC.mesa.model.RData") )
+load( file.path(PATH_OUT, "mesa.model.RData") )
+load( file.path(PATH_OUT, "pred.cv.mesa.RData") )
+load( file.path(PATH_OUT, "pred.mesa.model.RData") )
+
+##and stack in a new-list
+new.data <- list(est.cv.mesa=est.cv.mesa,
+                 est.mesa.model=est.mesa.model,
+                 MCMC.mesa.model=MCMC.mesa.model,
+                 mesa.model=mesa.model,
+                 pred.cv.mesa=pred.cv.mesa,
+                 pred.mesa.model=pred.mesa.model)
+
+rm(est.cv.mesa, est.mesa.model, MCMC.mesa.model, mesa.model,
+   pred.cv.mesa, pred.mesa.model) 
+
+##load data from library
+library(SpatioTemporal)
+data(mesa.model)
+data(est.cv.mesa)
+data(est.mesa.model)
+data(MCMC.mesa.model)
+data(pred.cv.mesa)
+data(pred.mesa.model)
+
+##################
+### mesa.model ###
+##################
+cat("\n\n*** mesa.model ***\n")
+if( !isTRUE(all.equal(mesa.model, new.data$mesa.model)) ){
+  stop("mesa.model differs between new and old versions")
+}
+message("mesa.model equal")
+
+######################
+### est.mesa.model ###
+######################
+cat("\n\n*** est.mesa.model ***\n")
+cat("Difference in status:\n")
+print(new.data$est.mesa.model$summary$status - est.mesa.model$summary$status)
+cat("\nDifference in par.cov:\n")
+print( all.equal(new.data$est.mesa.model$summary$par.cov,
+                 est.mesa.model$summary$par.cov) )
+cat("\nDifference in par.all:\n")
+print( all.equal(new.data$est.mesa.model$summary$par.all,
+                 est.mesa.model$summary$par.all) )
+
+if( !isTRUE(all.equal(est.mesa.model$res.best[c(4,7)],
+                      new.data$est.mesa.model$res.best[c(4,7)]) )){
+  stop("est.mesa.model$res.best convergence differs")
+}
+if( !isTRUE(all.equal(new.data$est.mesa.model$res.best$value,
+                      est.mesa.model$res.best$value, tolerance=1e-7) )){
+  stop("est.mesa.model$res.best$value differs more than 1e-7")
+}
+
+cat("\nDifference in res.best$par:\n")
+print( all.equal(est.mesa.model$res.best[c("par","par.cov","par.all")],
+                 new.data$est.mesa.model$res.best[c("par","par.cov","par.all")]) )
+cat("\nDifference in res.best$hessian:\n")
+print( all.equal(est.mesa.model$res.best[c("hessian","hessian.all")],
+                 new.data$est.mesa.model$res.best[c("hessian","hessian.all")]) )
+
+
+#######################
+### pred.mesa.model ###
+#######################
+cat("\n\n*** pred.mesa.model ***\n")
+if( !isTRUE( all.equal(pred.mesa.model$opts[-2],
+                       new.data$pred.mesa.model$opts[-2]) )){
+  stop("opts of pred.mesa.model differs")
+}
+if( !isTRUE( all.equal(pred.mesa.model$I, new.data$pred.mesa.model$I) )){
+  stop("Index of pred.mesa.model differs")
+}
+cat("Difference in nugget.unobs:\n")
+print( range(pred.mesa.model$opts$nugget.unobs -
+             new.data$pred.mesa.model$opts$nugget.unobs) )
+cat("\nDifference in parameters:\n")
+print( all.equal(pred.mesa.model$pars, new.data$pred.mesa.model$pars) )
+
+if( !isTRUE( all.equal(pred.mesa.model$beta, new.data$pred.mesa.model$beta,
+                       tolerance=5e-4) )){
+  stop("pred.mesa.model$beta differs more than 5e-4")
+}
+cat("\nDifference in beta:\n")
+print( all.equal(pred.mesa.model$beta, new.data$pred.mesa.model$beta) )
+
+if( !isTRUE(all.equal(pred.mesa.model[c("EX.mu.beta", "EX")],
+                      new.data$pred.mesa.model[c("EX.mu.beta", "EX")],
+                      tolerance=5e-6) )){
+  stop("pred.mesa.model$EX/EX.mu.beta differs more than 5e-6")
+}
+cat("\nDifference in EX.mu:\n")
+print( all.equal(pred.mesa.model$EX.mu, new.data$pred.mesa.model$EX.mu) )
+cat("\nDifference in EX.mu.beta:\n")
+print( all.equal(pred.mesa.model$EX.mu.beta,
+                 new.data$pred.mesa.model$EX.mu.beta) )
+cat("\nDifference in EX:\n")
+print( all.equal(pred.mesa.model$EX, new.data$pred.mesa.model$EX) )
+
+cat("\nDifference in VX:\n")
+print( all.equal(pred.mesa.model$VX, new.data$pred.mesa.model$VX) )
+cat("\nDifference in VX.pred:\n")
+print( all.equal(pred.mesa.model$VX.pred, new.data$pred.mesa.model$VX.pred) )
+
+
+###################
+### est.cv.mesa ###
+###################
+cat("\n\n*** est.cv.mesa ***\n")
+cat("\nDifference in CV grouping:\n")
+print( all.equal(new.data$est.cv.mesa$Ind.cv, est.cv.mesa$Ind.cv) )
+cat("\nDifference in parameters:\n")
+print( all.equal(new.data$est.cv.mesa$par.cov, est.cv.mesa$par.cov) )
+print( all.equal(new.data$est.cv.mesa$par.all, est.cv.mesa$par.all) )
+
+cat("\nDifference in parameter uncertainty:\n")
+print( all.equal(new.data$est.cv.mesa$par.cov.sd, est.cv.mesa$par.cov.sd) )
+print( all.equal(new.data$est.cv.mesa$par.all.sd, est.cv.mesa$par.all.sd) )
+
+if( !isTRUE( all.equal(new.data$est.cv.mesa$status[,-4], est.cv.mesa$status[,-4],
+                       tolerance=5e-7) )){
+  stop("est.cv.mesa$status[,-4] differs more than 5e-7")
+}
+
+if( !isTRUE( all.equal(new.data$est.cv.mesa$Ind.cv, est.cv.mesa$Ind.cv) )){
+  stop("est.cv.mesa$Ind.cv differs")
+}
+if( !isTRUE( all.equal(new.data$est.cv.mesa$x.fixed, est.cv.mesa$x.fixed) )){
+  stop("est.cv.mesa$x.fixed differs")
+}
+
+####################
+### pred.cv.mesa ###
+####################
+comparePredCV <- function(pred.cv.mesa.1, pred.cv.mesa.2, tol){
+  if( !isTRUE( all.equal(pred.cv.mesa.2$opts[-2], pred.cv.mesa.1$opts[-2]) )){
+    stop("opts[-2] differ")
+  }
+  if( !isTRUE( all.equal(pred.cv.mesa.2$Ind.cv, pred.cv.mesa.1$Ind.cv) )){
+    stop("Ind.cv differ")
+  }
+  cat("Difference in opts$nugget.unobs:\n")
+  print( range(pred.cv.mesa.1$opts$nugget.unobs -
+               pred.cv.mesa.2$opts$nugget.unobs ))
+
+  ##pred.opts
+  if( !isTRUE( all.equal(pred.cv.mesa.1$pred.obs[1:3],
+                         pred.cv.mesa.2$pred.obs[1:3]) )){
+    stop("pred.obs[1:3] differ")
+  }
+  if( !isTRUE(  all.equal(pred.cv.mesa.1$pred.obs[4:6], pred.cv.mesa.2$pred.obs[4:6],
+                          tolerance=tol[1]) )){
+    stop("pred.obs[4:6] differ more than ", tol[1])
+  }
+  cat("\nDifference in pred.obs$EX:\n")
+  print( all.equal(pred.cv.mesa.1$pred.obs[4:6], pred.cv.mesa.2$pred.obs[4:6]) )
+  cat("\nDifference in pred.obs$VX:\n")
+  print( all.equal(pred.cv.mesa.1$pred.obs[7:10], pred.cv.mesa.2$pred.obs[7:10]) )
+
+  ##pred.LTA
+  if( !isTRUE( all.equal(pred.cv.mesa.1$pred.LTA[1:2],
+                         pred.cv.mesa.2$pred.LTA[1:2]) )){
+    stop("pred.LTA[1:2] differ")
+  }
+  if( !isTRUE(  all.equal(pred.cv.mesa.1$pred.LTA[3:5], pred.cv.mesa.2$pred.LTA[3:5],
+                          tolerance=tol[2]) )){
+    stop("pred.obs[4:6] differ more than ", tol[2])
+  }
+  cat("\nDifference in pred.LTA$EX:\n")
+  print( all.equal(pred.cv.mesa.1$pred.LTA[3:5], pred.cv.mesa.2$pred.LTA[3:5]) )
+  cat("\nDifference in pred.LTA$VX:\n")
+  print( all.equal(pred.cv.mesa.1$pred.LTA[6:9], pred.cv.mesa.2$pred.LTA[6:9]) )
+  
+  ##pred.all
+  cat("\nDifference in pred.all$EX:\n")
+  print( all.equal(pred.cv.mesa.1$pred.all[1:3], pred.cv.mesa.2$pred.all[1:3]) )
+  cat("\nDifference in pred.all$VX:\n")
+  print( all.equal(pred.cv.mesa.1$pred.all[4:5], pred.cv.mesa.2$pred.all[4:5]) )
+  cat("\nDifference in pred.all$beta:\n")
+  print( all.equal(pred.cv.mesa.1$pred.all$beta, pred.cv.mesa.2$pred.all$beta) )
+}##function comparePredCV
+
+cat("\n\n*** pred.cv.mesa ***\n")
+comparePredCV(pred.cv.mesa, new.data$pred.cv.mesa, tol=c(5e-4, 1e-3) )
+
+
+#######################
+### MCMC.mesa.model ###
+#######################
+cat("\n\n*** MCMC.mesa.model ***\n")
+cat("Difference in acceptance rate (old, new, diff):\n")
+cat(c(mean(MCMC.mesa.model$acceptance),
+      mean(new.data$MCMC.mesa.model$acceptance),
+      mean(MCMC.mesa.model$acceptance)-
+      mean(new.data$MCMC.mesa.model$acceptance)))
+cat("\n\n")
+cat("Difference in log-like (old, new, diff):\n")
+cat(c(mean(MCMC.mesa.model$log.like),
+      mean(new.data$MCMC.mesa.model$log.like),
+      mean(MCMC.mesa.model$log.like) -
+      mean(new.data$MCMC.mesa.model$log.like)))
+cat("\n\n")
+cat("Difference in parameters (old, new, diff):\n")
+print(cbind(colMeans(MCMC.mesa.model$par),
+            colMeans(new.data$MCMC.mesa.model$par),
+            colMeans(MCMC.mesa.model$par)-
+            colMeans(new.data$MCMC.mesa.model$par)))
+cat("\n")

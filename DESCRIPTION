@@ -1,0 +1,29 @@
+Package: SpatioTemporal
+Type: Package
+LazyLoad: yes
+Title: Spatio-Temporal Model Estimation
+Version: 1.3.1
+Date: 2020-01-30
+Author: Johan Lindstrom, Adam Szpiro, Paul D. Sampson, Silas Bergen, Assaf P. Oron
+Maintainer: Johan Lindstrom <johanl@maths.lth.se>
+Encoding: UTF-8
+Description: Utilities that estimate, predict and cross-validate the
+    spatio-temporal model developed for MESA Air.
+License: GPL-2
+Depends:
+    R (>= 3.5.0),
+    Matrix
+Imports: 
+    stats,
+    graphics,
+    utils,
+    Rcpp (>= 0.12.17), 
+    MASS
+Suggests:
+    maps,
+    plotrix,
+    fields
+LinkingTo: 
+    Rcpp (>= 0.12.17),
+    RcppEigen (>= 0.3.3.4.0)
+RoxygenNote: 7.1.0

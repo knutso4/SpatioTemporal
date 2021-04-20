@@ -1,0 +1,712 @@
+##File that does additional error-checking (things
+##that take too long to keep in the examples)
+library(SpatioTemporal)
+
+## Treat all warnings as errors:
+options(warn=2)
+
+##function that construct the mesa.data object
+createMesaData <- function(){
+  data(mesa.data.raw)
+  mesa.data <- createSTdata(mesa.data.raw$obs, mesa.data.raw$X, n.basis=2, 
+                            SpatioTemporal = list(lax.conc.1500 =
+                              mesa.data.raw$lax.conc.1500))
+  return(mesa.data)
+}
+
+##############################
+## Consistency of loglikeST ##
+##############################
+rm(list = ls()[ls()!="createMesaData"])
+#load data
+data(mesa.model)
+data(est.mesa.model)
+
+##check that profile and full give the same results
+x.all <- coef(est.mesa.model)$par
+x <- coef(est.mesa.model, "cov")$par
+if( abs(loglikeST(x.all, mesa.model, "f") -
+        loglikeST(x, mesa.model, "p")) > 1e-8 ){
+  stop("loglike: full and profile not equal")
+}
+
+message("Consistency of loglikeST: OK\n\n")
+
+####################
+## No trend, etc. ##
+####################
+rm(list = ls()[ls()!="createMesaData"])
+#load data
+data(mesa.data.raw)
+mesa.data <- createMesaData()
+
+#create special cases:
+#1. no temporal trend
+mesa.data.noT <- updateTrend(mesa.data, 0)
+#2. no covariates
+mesa.data.noS <- createSTdata(mesa.data.raw$obs, mesa.data.raw$X[,"ID",drop=FALSE], n.basis=2)
+#2b. no covariates - error
+mesa.data.noS2 <- mesa.data
+mesa.data.noS2$covars <- NULL
+#3. no ST
+mesa.data.noST <- createSTdata(mesa.data.raw$obs, mesa.data.raw$X, n.basis=2)
+
+#create data models
+mesa.data.noT.model <- createSTmodel(mesa.data.noT)
+mesa.data.noST.model <- createSTmodel(mesa.data.noST)
+##should be an error - no LUR
+if( class(try(mesa.data.noS.model <- createSTmodel(mesa.data.noS),
+              silent=TRUE))!="try-error" ){ stop("No covars 1: Should be an error!") }
+if( class(try(mesa.data.noS2.model <- create.data.model(mesa.data.noS2),
+              silent=TRUE))!="try-error" ){ stop("No covars 2: Should be an error!") }
+
+#create data matrix - OK
+head(createDataMatrix(mesa.data.noT))
+head(createDataMatrix(mesa.data.noST))
+
+#variables names - OK
+loglikeSTnames(mesa.data.noT.model)
+loglikeSTnames(mesa.data.noST.model)
+
+#evaluate likelihood - OK
+loglikeST(rep(0,loglikeSTdim(mesa.data.noT.model)$nparam.cov),mesa.data.noT.model)
+loglikeST(rep(0,loglikeSTdim(mesa.data.noST.model)$nparam.cov),mesa.data.noST.model)
+
+#conditional expectation for parameters - OK
+par1 <- c(rep(c(1,-3),(loglikeSTdim(mesa.data.noT.model)$m+1)),-3)
+par2 <- c(rep(c(1,-3),(loglikeSTdim(mesa.data.noST.model)$m+1)),-3)
+tmp <- predict(mesa.data.noT.model, par1)
+tmp <- predict(mesa.data.noST.model, par2)
+
+message("No trend, etc: OK\n\n")
+
+#################
+## Predictions ##
+#################
+rm(list = ls()[ls()!="createMesaData"])
+##load data
+mesa.data <- createMesaData()
+data(mesa.model)
+data(est.mesa.model)
+
+##extract estimated parameters
+x <- coef(est.mesa.model,"cov")$par
+
+##compute predictions at all locations, including beta-fields
+EX <- predict(mesa.model, x)
+##compute predictions at only observations locations
+EX.obs <- predict(mesa.model, x, STdata=mesa.data, only.obs=TRUE,
+                  pred.var=FALSE)
+
+##check for size consistency
+if((dim(EX$EX)[1]!=dim(mesa.data$trend)[1]) ||
+   (dim(EX$EX)[2]!=dim(mesa.data$covars)[1]) ){
+  stop("predict.STmodel: dimension missmatch - EX")
+}
+if( (dim(EX.obs$EX)[1]!=dim(mesa.data$obs)[1]) ||
+    (dim(EX.obs$EX)[2]!=1) ){
+  stop("predict.STmodel: dimension missmatch - EX.obs")
+}
+##check that results are equal
+if( max(abs(EX$EX[EX$I$I]-EX.obs$EX)) > 1e-13 ){
+  stop("predict.STmodel: Results not equal.")
+}
+
+##the following should be errors (various dimension miss-matches)
+if( class(try(predict(mesa.model, est.mesa.model.ST),
+              silent=TRUE)) != "try-error" ){
+  stop("predict.STmodel: Should be an error!")
+}
+
+message("predict.STmodel: OK\n\n")
+
+#########################################
+## Compute trends for additional dates ##
+#########################################
+rm(list = ls()[ls()!="createMesaData"])
+##load data
+data(mesa.data.raw)
+
+extra.dates <- seq(min(as.Date(rownames(mesa.data.raw$obs))),
+                   max(as.Date(rownames(mesa.data.raw$obs))), by=7)
+##models with and with out AQS observations
+mesa.1 <- createSTdata(mesa.data.raw$obs, mesa.data.raw$X, n.basis=2)
+mesa.2 <- createSTdata(mesa.data.raw$obs, mesa.data.raw$X, n.basis=2,
+                       extra.dates=extra.dates) 
+
+if( max(abs(mesa.2$trend[mesa.2$trend$date %in% mesa.1$trend$date,1:2] -
+            mesa.1$trend[,1:2])) > 1e-13 ){
+  stop("Trends differ depending on additional dates.")
+}
+message("Trends for additional dates: OK\n\n")
+
+############################################################
+## Predictions at unobserved sites, with additional dates ##
+############################################################
+rm(list = ls()[ls()!="createMesaData"])
+##load data
+data(mesa.data.raw)
+data(mesa.model)
+data(est.mesa.model)
+
+##create STdata object
+obs.aqs <- mesa.data.raw$obs[,mesa.data.raw$X$type=="AQS"]
+extra.dates <- seq(min(as.Date(rownames(obs.aqs))),
+                   max(as.Date(rownames(obs.aqs))), by=7)
+##models with and with out AQS observations
+mesa.all <- createSTdata(mesa.data.raw$obs, mesa.data.raw$X, n.basis=2,
+                         extra.dates=extra.dates) 
+mesa.permute <- createSTdata(mesa.data.raw$obs[,sample.int(25)],
+                             mesa.data.raw$X[sample.int(25),],
+                             n.basis=2)
+mesa.aqs <- createSTdata(obs.aqs, mesa.data.raw$X, n.basis=2,
+                         extra.dates=extra.dates)
+##models with and with out AQS observations including ST-covariate
+mesa.all.ST <- createSTdata(mesa.data.raw$obs, mesa.data.raw$X, n.basis=2,
+                            SpatioTemporal=mesa.data.raw[3])
+mesa.aqs.ST <- createSTdata(obs.aqs, mesa.data.raw$X, n.basis=2,
+                            SpatioTemporal=mesa.data.raw[3])
+
+##should be an error, no ST covariates for extra dates
+if( class(try(createSTdata(mesa.data.raw$obs, mesa.data.raw$X, n.basis=2,
+                           SpatioTemporal=mesa.data.raw[3],
+                           extra.dates=extra.dates),
+              silent=TRUE))!="try-error" ){
+  stop("unobserved sites 1: Should be an error!")
+}
+##should be an error, no ST covariates for extra locations
+ST <- mesa.data.raw[3]
+ST[[1]] <- ST[[1]][,mesa.data.raw$X$type=="AQS",drop=FALSE]
+if( class(try(createSTdata(mesa.data.raw$obs, mesa.data.raw$X, n.basis=2,
+                           SpatioTemporal=ST), silent=TRUE)) != "try-error" ){
+  stop("unobserved sites 2: Should be an error!")
+}
+
+##check that trends are equal (and equal to precomputed values)
+if( abs(max(mesa.all$trend[mesa.all$trend$date %in% mesa.all.ST$trend$date,1:2]-
+              mesa.all.ST$trend[1:2]))>1e-13 ){
+  stop("Trends differ between std. and ST")
+}
+if(  !isTRUE(all.equal(mesa.model$trend, mesa.all.ST$trend, tolerance=1e-12)) ){
+  stop("Trends differ from pre computed for ST.")
+}
+if(  !isTRUE(all.equal(mesa.model$trend, mesa.permute$trend, tolerance=1e-12)) ){
+  stop("Trends differ from pre computed for permuted.")
+}
+##use trend from the ALL datasets to ensure that we are equal to precomputed
+##results
+mesa.aqs.ST <- updateTrend(mesa.aqs.ST, fnc=mesa.all.ST$trend.fnc)
+mesa.aqs <- updateTrend(mesa.aqs, fnc=mesa.all$trend.fnc,
+                        extra.dates=mesa.all$trend$date)
+
+##create STmodels.
+cov.nu <- list(covf="exp", nugget=TRUE)
+mesa.all <- createSTmodel(mesa.all, LUR=mesa.model$LUR.list,
+                          cov.beta=mesa.model$cov.beta, cov.nu=cov.nu,
+                          locations=mesa.model$locations.list)
+mesa.aqs <- createSTmodel(mesa.aqs, LUR=mesa.model$LUR.list,
+                          cov.beta=mesa.model$cov.beta, cov.nu=cov.nu,
+                          locations=mesa.model$locations.list)
+mesa.all.ST <- createSTmodel(mesa.all.ST, LUR=mesa.model$LUR.list,
+                             ST=1, cov.beta=mesa.model$cov.beta, cov.nu=cov.nu,
+                             locations=mesa.model$locations.list)
+mesa.aqs.ST <- createSTmodel(mesa.aqs.ST, LUR=mesa.model$LUR.list,
+                             ST=1, cov.beta=mesa.model$cov.beta, cov.nu=cov.nu,
+                             locations=mesa.model$locations.list)
+
+##compute likelihood for all models
+loglikeST(coef(est.mesa.model, "all")[loglikeSTnames(mesa.all, all=TRUE),
+                                      "par"], mesa.all, "f")
+loglikeST(coef(est.mesa.model, "cov")[loglikeSTnames(mesa.all, all=FALSE),
+                                      "par"], mesa.all, "p")
+loglikeST(coef(est.mesa.model, "all")[loglikeSTnames(mesa.aqs, all=TRUE),
+                                      "par"], mesa.aqs, "f")
+loglikeST(coef(est.mesa.model, "cov")[loglikeSTnames(mesa.aqs, all=FALSE),
+                                      "par"], mesa.aqs, "p")
+
+loglikeST(coef(est.mesa.model, "all")[loglikeSTnames(mesa.all.ST, all=TRUE),
+                                      "par"], mesa.all.ST, "f")
+loglikeST(coef(est.mesa.model, "cov")[loglikeSTnames(mesa.all.ST, all=FALSE),
+                                      "par"], mesa.all.ST, "p")
+loglikeST(coef(est.mesa.model, "all")[loglikeSTnames(mesa.aqs.ST, all=TRUE),
+                                      "par"], mesa.aqs.ST, "f")
+loglikeST(coef(est.mesa.model, "cov")[loglikeSTnames(mesa.aqs.ST, all=FALSE),
+                                      "par"], mesa.aqs.ST, "p")
+
+##predictions for NON-ST case
+x <- coef(est.mesa.model, "cov")[loglikeSTnames(mesa.all, all=FALSE),]
+##compute predictions
+pred1 <- predict(mesa.aqs, x$par, STdata=mesa.all)
+pred2 <- predict(mesa.aqs, x$par)
+pred3 <- predict(mesa.aqs, x$par, STdata=mesa.permute)
+
+##compare to predictions obtained in two different ways (ignoring the 9th
+##component which is Index to obs which should differ)
+if( !isTRUE(all.equal(pred2[1:8],pred1[1:8])) ){
+  stop("Predictions differ.")
+}
+
+##compare predictions for permuted and un-permuted locations.
+if( !isTRUE(all.equal(pred1$pars, pred3$pars)) ){
+  stop("Estimated parameters differ for permuted locations.")
+}
+Itmp <- match(mesa.all$locations$ID, mesa.permute$covars$ID)
+Idate <- match(rownames(pred3$EX),rownames(pred1$EX))
+if(max(abs(pred3$beta$mu[Itmp,]-pred1$beta$mu))>1e-13 ||
+   max(abs(pred3$beta$EX[Itmp,]-pred1$beta$EX))>1e-13 ||
+   max(abs(pred3$beta$VX[Itmp,]-pred1$beta$VX))>1e-13 ){
+  stop("Predicted betas differ for permuted locations.")
+}
+if(abs(max(pred1$EX[Idate,] - pred3$EX[,Itmp]))>1e-13 ||
+   abs(max(pred1$EX.mu[Idate,] - pred3$EX.mu[,Itmp]))>1e-13 ||
+   abs(max(pred1$EX.mu.beta[Idate,] - pred3$EX.mu.beta[,Itmp]))>1e-13 ||
+   abs(max(pred1$VX[Idate,] - pred3$VX[,Itmp]))>1e-13 ){
+  stop("Prediced fields/variances differ permuted locations.")
+}
+
+
+##predictions for ST case
+x <- coef(est.mesa.model, "cov")[loglikeSTnames(mesa.all.ST, all=FALSE),]
+##compute predictions
+pred1 <- predict(mesa.aqs.ST, x$par, STdata=mesa.all.ST)
+pred2 <- predict(mesa.aqs.ST, x$par)
+
+##compare to predictions obtained in two different ways (ignoring the 9th
+##component which is Index to obs which should differ)
+if( !isTRUE(all.equal(pred2[1:8],pred1[1:8])) ){
+  stop("Predictions differ.")
+}
+
+##the following should be errors (various dimension miss-matches)
+if( class(try(predict(mesa.all, est.mesa.model),
+              silent=TRUE)) != "try-error" ){
+  stop("predict.STmodel: Should be an error!")
+}
+if( class(try(predict(mesa.all.ST, est.mesa.model),
+              silent=TRUE)) != "try-error" ){
+  stop("predict.STmodel: Should be an error!")
+}
+if( class(try(predict(mesa.all.ST, est.mesa.model.ST, mesa.all),
+              silent=TRUE)) != "try-error" ){
+  stop("predict.STmodel: Should be an error!")
+}
+
+message("Predictions at unobserved sites: OK\n\n")
+
+######################################
+## Colocated sites and observations ##
+######################################
+rm(list = ls()[ls()!="createMesaData"])
+##load the data
+data(mesa.data.raw)
+data(mesa.model)
+
+##create STdata object with 4 replicated locations
+Norg <- dim(mesa.data.raw$obs)[2]
+obs <- cbind(mesa.data.raw$obs,mesa.data.raw$obs[,1:4])
+colnames(obs) <- c(colnames(mesa.data.raw$obs), paste("rep",1:4,sep="."))
+X <- rbind(mesa.data.raw$X,mesa.data.raw$X[1:4,])
+X$ID <- colnames(obs)
+##first a model with just replicated locations
+mesa.data <- createSTdata(mesa.data.raw$obs, X, n.basis=2)
+##second a model with replicated locations and observations
+mesa.data.2 <- createSTdata(obs, X, n.basis=2)
+
+##create the model structure
+mesa.model <- createSTmodel(mesa.data, LUR=mesa.model$LUR.list, ST=NULL,
+                            cov.nu=mesa.model$cov.nu,
+                            cov.beta=mesa.model$cov.beta)
+
+##This should be an error (colocated sites, and no beta nugget)
+if( class(try(createSTmodel(mesa.data.2, LUR=mesa.model$LUR.list,
+                            ST=mesa.model$ST.list,
+                            cov.nu=mesa.model$cov.nu,
+                            cov.beta=mesa.model$cov.beta),
+              silent=TRUE))!="try-error"){
+  stop("Colocated sites 1: Should be an error!")
+}
+##colocated sites with nugget in beta, should work
+cov.beta <- mesa.model$cov.beta
+cov.beta$covf <- c("exp","iid","iid")
+cov.beta$nugget <- TRUE
+mesa.model.2 <- createSTmodel(mesa.data.2, LUR=mesa.model$LUR.list, ST=NULL,
+                              cov.nu=mesa.model$cov.nu, cov.beta=cov.beta)
+
+##Let's create a parameter vector
+x <- c(rep(c(1,-3),loglikeSTdim(mesa.model)$m+1), -3, 0)
+names(x) <- loglikeSTnames(mesa.model, FALSE)
+x.2 <- c(1, -3, rep(-3,loglikeSTdim(mesa.model.2)$m), 1, -3, -3, 0)
+names(x.2) <- loglikeSTnames(mesa.model.2, FALSE)
+
+##Simulate 1 replicate with these parameters
+sim.data <- simulate(mesa.model, nsim=1, x=x)
+sim.data.2 <- simulate(mesa.model.2, nsim=1, x=x.2)
+##replace observations in the first model
+mesa.model$obs <- sim.data$obs[[1]]
+mesa.model.2.sim <- mesa.model.2
+mesa.model.2.sim$obs <- sim.data.2$obs[[1]]
+
+##predictions
+E1 <- predict(mesa.model, x)
+E2 <- predict(mesa.model.2, x.2)
+E2.sim <- predict(mesa.model.2.sim, x.2)
+
+##predictions should be equal for colocated sites.
+if(max(abs(E1$beta$EX[1:4,] - E1$beta$EX[(1:4)+Norg,])) > 1e-13 ||
+   max(abs(E1$beta$VX[1:4,] - E1$beta$VX[(1:4)+Norg,])) > 1e-13 ){
+  stop("Colocated sites 2a: Too big difference in predictions of beta")
+}
+if(max(abs(E1$EX[,1:4] - E1$EX[,(1:4)+Norg])) > 1e-13 ||
+   max(abs(E1$EX.mu[,1:4] - E1$EX.mu[,(1:4)+Norg])) > 1e-13 ||
+   max(abs(E1$VX[,1:4] - E1$VX[,(1:4)+Norg])) > 1e-13 ||
+   max(abs(E1$EX.mu.beta[,1:4] - E1$EX.mu.beta[,(1:4)+Norg])) > 1e-13 ){
+  stop("Colocated sites 2b: Too big difference in predictions of EX/VX")
+}
+##predition variances should differ by nu.nugget since unobserved sites default
+##to nu.nugget=0
+if( max(max(abs(E1$VX.pred[,1:4] - E1$VX.pred[,(1:4)+Norg])) -
+        loglikeSTgetPars(x, mesa.model)$cov.nu$nugget[1]) > 1e-13 ){
+  stop("Colocated sites 2c: Incorrect difference in VXpred")
+}
+
+##predictions should be equal for colocated sites with identical observations
+if(max(abs(E2$beta$EX[1:4,] - E2$beta$EX[(1:4)+Norg,])) > 1e-12 ||
+   max(abs(E2$beta$VX[1:4,] - E2$beta$VX[(1:4)+Norg,])) > 1e-12 ){
+  stop("Colocated sites 3a: Too big difference in predictions of beta")
+}
+##predition variances should not differ since all sites have been observed.
+if(max(abs(E2$EX[,1:4] - E2$EX[,(1:4)+Norg])) > 1e-12 ||
+   max(abs(E2$EX.mu[,1:4] - E2$EX.mu[,(1:4)+Norg])) > 1e-12 ||
+   max(abs(E2$VX[,1:4] - E2$VX[,(1:4)+Norg])) > 1e-12 ||
+   max(abs(E2$EX.mu.beta[,1:4] - E2$EX.mu.beta[,(1:4)+Norg])) > 1e-12 ||
+   max(abs(E2$VX.pred[,1:4] - E2$VX.pred[,(1:4)+Norg])) > 1e-12 ){
+  stop("Colocated sites 3b: Too big difference in predictions of EX/VX")
+}
+
+##predictions should differ for colocated sites with identical observations
+##but variances should still be equal
+if(max(abs(E2.sim$beta$EX[1:4,] - E2.sim$beta$EX[(1:4)+Norg,])) < 1e-12 ){
+  stop("Colocated sites 4a: No difference between sites with different observations.")
+}
+if(max(abs(E2.sim$beta$mu[1:4,] - E2.sim$beta$mu[(1:4)+Norg,])) > 1e-12 ||
+   max(abs(E2.sim$beta$VX[1:4,] - E2.sim$beta$VX[(1:4)+Norg,])) > 1e-12 ){
+  stop("Colocated sites 4b: Mean and variance for beta should be equal.")
+}
+if(max(abs(E2.sim$EX[,1:4] - E2.sim$EX[,(1:4)+Norg])) < 1e-12 ||
+   max(abs(E2.sim$EX.mu.beta[,1:4] - E2.sim$EX.mu.beta[,(1:4)+Norg])) < 1e-12 ){
+  stop("Colocated sites 4c: No difference between sites with different observations.")
+}
+
+if(max(abs(E2.sim$EX.mu[,1:4] - E2.sim$EX.mu[,(1:4)+Norg])) > 1e-12 ||
+   max(abs(E2.sim$VX[,1:4] - E2.sim$VX[,(1:4)+Norg])) > 1e-12 ||
+   max(abs(E2.sim$VX.pred[,1:4] - E2.sim$VX.pred[,(1:4)+Norg])) > 1e-12 ){
+  stop("Colocated sites 4d: Too big difference in predictions of EX/VX")
+}
+
+message("Colocated sites and observations: OK\n\n")
+
+################################################
+## Test scaling of covariates for predictions ##
+################################################
+rm(list = ls()[ls()!="createMesaData"])
+##load data
+mesa.data <- createMesaData()
+data(est.mesa.model)
+
+##set up a mesa-model with scaled data and different nuggets.
+LUR = list(c("log10.m.to.a1", "s2000.pop.div.10000", "km.to.coast"),
+  "km.to.coast", "km.to.coast")
+cov.beta <- list(covf="exp", nugget=FALSE)
+cov.nu <- list(covf="exp", nugget="type", random.effect=FALSE)
+locations <- list(coords=c("x","y"), long.lat=c("long","lat"), others="type")
+##create object
+mesa.model <- createSTmodel(mesa.data, LUR=LUR, cov.beta=cov.beta,
+                            cov.nu=cov.nu, locations=locations,
+                            scale=TRUE)
+
+##estimate model
+dim <- loglikeSTdim(mesa.model)
+x.init <- cbind(rep(2,dim$nparam.cov), c(rep(c(1,-3),dim$m+1),-3,0))
+
+if(FALSE){
+  est.mesa.model <- estimate(mesa.model, x.init)
+  x.est <- coef(est.mesa.model,pars="cov")$par
+}else{
+  data(est.mesa.model)
+  x.est <- coef(est.mesa.model,pars="cov")$par
+}
+
+##run predictions
+pred <- predict(mesa.model, x.est)
+
+##run CV-predictions
+I.cv <- createCV(mesa.model, 0)
+if(FALSE){
+  estCV <- estimateCV(mesa.model, x.est, I.cv)
+  x.est <- coef(estCV, pars="cov")
+}
+predCV <- predictCV(mesa.model, x.est, I.cv)
+
+##predictions at a few left out sites
+##create reduced object
+mesa.data$obs <- mesa.data$obs[!(mesa.data$obs$ID %in% mesa.data$covars$ID[1:3]),]
+mesa.model <- createSTmodel(mesa.data, LUR=LUR, cov.beta=cov.beta,
+                            cov.nu=cov.nu, locations=locations,
+                            scale=TRUE, strip=TRUE)
+
+mesa.data.strip <- mesa.data
+mesa.data.strip$SpatioTemporal <- NULL
+mesa.data.strip$obs <- data.frame(obs=double(0), date=integer(0),
+                                  ID=character(0), stringsAsFactors=FALSE)
+mesa.data.strip$covars <- mesa.data.strip$covars[!(mesa.data.strip$covars$ID
+                                                   %in% unique(mesa.data$obs$ID)),]
+
+##predictions for only mesa.model
+pred1 <- predict(mesa.model, x.est)
+##for only the left out locations
+pred2 <- predict(mesa.model, x.est, STdata=mesa.data.strip)
+##for all locations, two options
+pred3.1 <- predict(mesa.model, x.est, STdata=mesa.data.strip,
+                   combine.data=TRUE)
+pred3.2 <- predict(mesa.model, x.est, STdata=mesa.data)
+
+message("Scaling of covariates - predictions: DONE\n\n")
+
+##########################################
+## DERIVATIVES FOR COVARIANCE FUNCTIONS ##
+##########################################
+rm(list = ls()[ls()!="createMesaData"])
+##vector of distances
+d <- seq(0, 10, length.out=1e2);
+     
+##select parameters
+range <- 3.5;
+sill <- pi;
+shape <- 2.5
+
+##covariance functions to test (matern does not compute derivatives)
+name <- list("exp", "exp2", "cubic", "spherical", "cauchy")
+pars <- list(c(range,sill), c(range,sill), c(range,sill),
+             c(range,sill), c(range,sill,shape))
+
+##comapre finite and  other derivatives
+err1 <- array(NA, c(length(name), max(sapply(pars,length))) )
+err2 <- array(NA, c(length(name), max(sapply(pars,length)),
+                    max(sapply(pars,length))) )
+h <- 1e-5
+for(i in 1:length(name)){
+  ##first deriv
+  for(j in 1:length(pars[[i]])){
+    tmp <- rep(0,length(pars[[i]]))
+    tmp[j] <- h
+    df1 <- (evalCovFuns(name[[i]], pars[[i]]+tmp, d) -
+            evalCovFuns(name[[i]], pars[[i]], d))/h
+    df2 <- evalCovFuns(name[[i]], pars[[i]], d, j)
+    err1[i,j] <- max(abs(df1-df2))
+  }#for(j in 1:length(pars[[i]]))
+  ##second deriv
+  for(k in 1:length(pars[[i]])){
+    for(l in k:length(pars[[i]])){
+      tmp <- rep(0, length(pars[[i]]))
+      ##f(x+h,y+h)
+      tmp[k] <- tmp[k] + h
+      tmp[l] <- tmp[l] + h
+      df1 <- evalCovFuns(name[[i]], pars[[i]]+tmp, d)
+      ##-f(x+h,y-h)
+      tmp[l] <- tmp[l] - 2*h
+      df1 <- df1 - evalCovFuns(name[[i]], pars[[i]]+tmp, d)
+      ##+f(x-h,y-h)
+      tmp[k] <- tmp[k] - 2*h
+      df1 <- df1 + evalCovFuns(name[[i]], pars[[i]]+tmp, d)
+      ##-f(x-h,y+h)
+      tmp[l] <- tmp[l] + 2*h
+      df1 <- df1 - evalCovFuns(name[[i]], pars[[i]]+tmp, d)
+      df1 <- df1/(4*h*h)
+      df2 <- evalCovFuns(name[[i]], pars[[i]], d, c(k,l))
+      err2[i,k,l] <- max(abs(df1-df2))
+    }#for(l in (k+1):length(pars[[i]]))
+  }#for(k in 1:length(pars[[i]]))
+}#for(i in 1:length(name))
+
+if( !all(err1<h, na.rm=TRUE) ){
+  stop("First derivatives differ by more than h")
+}
+if( !all(err2 < 2*h, na.rm=TRUE) ){
+  stop("Second derivatives differ by more than 2*h")
+}
+message("Derivatives of covariance functions: DONE\n\n")
+
+### TODO TODO TODO - DErivatives currently not implmented in makeSigmaB and makeSigmaNU due to change in implementation to Eigen ###
+# ################################
+# ## DERIVATIVES FOR makeSigmaB ##
+# ################################
+# rm(list = ls()[ls()!="createMesaData"])
+# h <- 1e-5
+# 
+# ##First create some random locations
+# x <- rnorm(5)
+# y <- rnorm(5)
+# 
+# ##compute distance matrix
+# D <- crossDist( cbind(x,y) )
+# 
+# ##create a block diagonal matrix exponential covariance matrix
+# ##with different range, sill, and nugget
+# pars <- list(c(.3,2), c(2,1), c(2,3))
+# nugget <- c(.5,0,1)
+# 
+# Sigma <- makeSigmaB(pars, D, type=c("exp","exp2","cubic"),
+#                     nugget=nugget)
+# Sigma.df <- vector("list", sum(sapply(pars,length)))
+# Sigma.df.h <- vector("list", sum(sapply(pars,length)))
+# err1 <- double( length(Sigma.df) )
+# for(i in 1:length(Sigma.df)){
+#   Sigma.df[[i]] <- makeSigmaB(pars, D, type=c("exp","exp2","cubic"),
+#                               nugget=nugget, diff=i)
+#   tmp <- pars
+#   tmp[[ ceiling(i/2) ]][ ((i-1) %% 2)+1 ] <-
+#     tmp[[ ceiling(i/2) ]][ ((i-1) %% 2)+1 ] + h
+#   Sigma.df.h[[i]] <- makeSigmaB(tmp, D, type=c("exp","exp2","cubic"),
+#                                 nugget=nugget)
+#   Sigma.df.h[[i]] <- (Sigma.df.h[[i]] - Sigma)/h
+# 
+#   err1[i] <- max(abs(Sigma.df[[i]]-Sigma.df.h[[i]]))
+# }
+# 
+# Sigma.df2 <- vector("list", sum(sapply(pars,length)))
+# Sigma.df2.h <- vector("list", sum(sapply(pars,length)))
+# err2 <- matrix(NA, length(Sigma.df), length(Sigma.df) )
+# for(i in 1:length(Sigma.df2)){
+#   Sigma.df2[[i]] <- vector("list", sum(sapply(pars,length))-i+1)
+#   Sigma.df2.h[[i]] <- vector("list", sum(sapply(pars,length))-i+1)
+#   for(j in i:length(Sigma.df2)){
+#     Sigma.df2[[i]][[j]] <- makeSigmaB(pars, D, type=c("exp","exp2","cubic"),
+#                                       nugget=nugget, diff=c(i,j))
+#     tmpPP <- tmpMP <- tmpPM <- tmpMM <- pars
+#     ##(+h,+k)
+#     tmpPP[[ ceiling(i/2) ]][ ((i-1) %% 2)+1 ] <-
+#       tmpPP[[ ceiling(i/2) ]][ ((i-1) %% 2)+1 ] + h
+#     tmpPP[[ ceiling(j/2) ]][ ((j-1) %% 2)+1 ] <-
+#       tmpPP[[ ceiling(j/2) ]][ ((j-1) %% 2)+1 ] + h
+#     ##(-h,+k)
+#     tmpMP[[ ceiling(i/2) ]][ ((i-1) %% 2)+1 ] <-
+#       tmpMP[[ ceiling(i/2) ]][ ((i-1) %% 2)+1 ] - h
+#     tmpMP[[ ceiling(j/2) ]][ ((j-1) %% 2)+1 ] <-
+#       tmpMP[[ ceiling(j/2) ]][ ((j-1) %% 2)+1 ] + h
+#     ##(+h,-k)
+#     tmpPM[[ ceiling(i/2) ]][ ((i-1) %% 2)+1 ] <-
+#       tmpPM[[ ceiling(i/2) ]][ ((i-1) %% 2)+1 ] + h
+#     tmpPM[[ ceiling(j/2) ]][ ((j-1) %% 2)+1 ] <-
+#       tmpPM[[ ceiling(j/2) ]][ ((j-1) %% 2)+1 ] - h
+#     ##(-h,-k)
+#     tmpMM[[ ceiling(i/2) ]][ ((i-1) %% 2)+1 ] <-
+#       tmpMM[[ ceiling(i/2) ]][ ((i-1) %% 2)+1 ] - h
+#     tmpMM[[ ceiling(j/2) ]][ ((j-1) %% 2)+1 ] <-
+#       tmpMM[[ ceiling(j/2) ]][ ((j-1) %% 2)+1 ] - h
+#     ##finite difference
+#     Sigma.df2.h[[i]][[j]] <-
+#       (makeSigmaB(tmpPP, D, type=c("exp","exp2","cubic"), nugget=nugget)
+#         - makeSigmaB(tmpMP, D, type=c("exp","exp2","cubic"), nugget=nugget)
+#         - makeSigmaB(tmpPM, D, type=c("exp","exp2","cubic"), nugget=nugget)
+#         + makeSigmaB(tmpMM, D, type=c("exp","exp2","cubic"), nugget=nugget)
+#       )
+#     Sigma.df2.h[[i]][[j]] <- Sigma.df2.h[[i]][[j]] / (4*h*h)
+#     err2[i,j] <- max(abs( Sigma.df2[[i]][[j]]-Sigma.df2.h[[i]][[j]] ))
+#   }
+# }
+# if( !all(err1 < 5*h, na.rm=TRUE) ){
+#   stop("First derivative of sigma.B differ by more than 5*h")
+# }
+# if( !all(err2 < 5*h, na.rm=TRUE) ){
+#   stop("Second derivative sigma.B by more than 5*h")
+# }
+# 
+# message("Derivatives of sigma.B: DONE\n\n")
+# 
+# #################################
+# ## DERIVATIVES FOR makeSigmaNu ##
+# #################################
+# rm(list = ls()[ls()!="createMesaData"])
+# h <- 1e-5
+# 
+# ##First create some random locations
+# x <- rnorm(5)
+# y <- rnorm(5)
+# 
+# ##compute distance matrix
+# D <- crossDist( cbind(x,y) )
+# 
+# #a vector of locations
+# I <- c(1,2,3,1,4,4,3,2,1,1)
+# T <- c(1,1,1,2,2,3,3,3,3,4)
+# 
+# ##create a block diagonal matrix consisting of four blocks
+# pars <- c(.4,2)
+# sigma.nu <- makeSigmaNu(pars, D, "exp", nugget=0.1,
+#                         blocks1 = c(3,2,4,1), ind1 = I)
+# ##and compute derivatives
+# Sigma.df <- vector("list", length(pars))
+# Sigma.df.h <- vector("list", length(pars))
+# err1 <- double( length(Sigma.df) )
+# for(i in 1:length(Sigma.df)){
+#   Sigma.df[[i]] <- makeSigmaNu(pars, D, "exp", nugget=0.1,
+#                                blocks1 = c(3,2,4,1), ind1 = I, diff=i)
+#   tmp <- pars
+#   tmp[i] <- tmp[i]+h
+#   Sigma.df.h[[i]] <- makeSigmaNu(tmp, D, "exp", nugget=0.1,
+#                                  blocks1 = c(3,2,4,1), ind1 = I)
+#   Sigma.df.h[[i]] <- (Sigma.df.h[[i]] - sigma.nu)/h
+# 
+#   err1[i] <- max(abs(Sigma.df[[i]]-Sigma.df.h[[i]]))
+# }
+# 
+# ##compute second derivatives
+# Sigma.df2 <- vector("list", length(pars))
+# Sigma.df2.h <- vector("list", length(pars))
+# err2 <- matrix(NA, length(Sigma.df2), length(Sigma.df2) )
+# for(i in 1:length(Sigma.df2)){
+#   Sigma.df2[[i]] <- vector("list", length(pars)-i+1)
+#   Sigma.df2.h[[i]] <- vector("list", length(pars)-i+1)
+#   for(j in i:length(Sigma.df2)){
+#     Sigma.df2[[i]][[j]] <- makeSigmaNu(pars, D, "exp", nugget=0.1, blocks1 =
+#                                        c(3,2,4,1), ind1 = I, diff=c(i,j))
+#     
+#     tmp <- rep(0, length(pars))
+#     ##f(x+h,y+h)
+#     tmp[i] <- tmp[i] + h
+#     tmp[j] <- tmp[j] + h
+#     df1 <- makeSigmaNu(pars+tmp, D, "exp", nugget=0.1,
+#                        blocks1 = c(3,2,4,1), ind1 = I)
+#     ##-f(x+h,y-h)
+#     tmp[j] <- tmp[j] - 2*h
+#     df1 <- df1 - makeSigmaNu(pars+tmp, D, "exp", nugget=0.1,
+#                              blocks1 = c(3,2,4,1), ind1 = I)
+#     ##+f(x-h,y-h)
+#     tmp[i] <- tmp[i] - 2*h
+#     df1 <- df1 + makeSigmaNu(pars+tmp, D, "exp", nugget=0.1,
+#                              blocks1 = c(3,2,4,1), ind1 = I)
+#     ##-f(x-h,y+h)
+#     tmp[j] <- tmp[j] + 2*h
+#     df1 <- df1 - makeSigmaNu(pars+tmp, D, "exp", nugget=0.1,
+#                              blocks1 = c(3,2,4,1), ind1 = I)
+#     Sigma.df2.h[[i]][[j]] <- df1/(4*h*h)
+#     err2[i,j] <- max(abs(Sigma.df2.h[[i]][[j]]-Sigma.df2[[i]][[j]]))
+#   }
+# }
+# 
+# 
+# if( !all(err1 < 2.5*h, na.rm=TRUE) ){
+#   stop("First derivative of sigma.nu differ by more than 2.5*h")
+# }
+# if( !all(err2 < 2.5*h, na.rm=TRUE) ){
+#   stop("Second derivative sigma.nu by more than 2.5*h")
+# }
+# 
+# message("Derivatives of sigma.nu: DONE\n\n")
+
+
+##########
+## DONE ##
+##########
+message("Checking: DONE")
+
