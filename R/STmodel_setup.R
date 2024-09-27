@@ -42,23 +42,24 @@
 ##' use; the vector either give names or layers in \code{STdata$SpatioTemporal}
 ##' to use, compare \code{character} and \code{integer} options for \code{LUR.in}
 ##' above.
-##'
+##' 
 ##' If covariates are specified using names these should match \cr
 ##' \code{dimnames(STdata$SpatioTemporal)[[3]]}, unmatched elements are
 ##' dropped with a warning.
-##'
+##' 
 ##' @title Internal Function that do Covariate Selection
 ##' @param STdata \code{STdata} object with observations, covariates, trends, etc;
 ##'   see \code{\link{mesa.data.raw}}.
 ##' @param LUR.in A vector or list indicating which geographic covariates to use.
-##'
+##' 
 ##' @return A list of LUR specifications, as \code{\link[stats:formula]{formula}};
 ##'   or a ST specification as a character vector.
-##'
+##' 
 ##' @example Rd_examples/Ex_processLUR.R
-##'
-##' @author Johan Lindstr?m
+##' 
+##' @author Johan Lindstrom
 ##' @family STmodel functions
+##' @importFrom stats as.formula
 ##' @export
 processLUR <- function(STdata, LUR.in){
   ##check class belonging
@@ -70,7 +71,7 @@ processLUR <- function(STdata, LUR.in){
   }else{
     nt <- dim(STdata$trend)[2]
   }
-
+  
   ##There are a few different options for LUR.in
   if( is.null(LUR.in) ){
     ##only constant
@@ -78,8 +79,7 @@ processLUR <- function(STdata, LUR.in){
   }else if( is.list(LUR.in) ){
     ##already a list, make sure the length is right
     if( length(LUR.in)!=nt ){
-      stop(paste("Length of 'LUR.in', ", length(LUR.in),", ", "does not match number of temporal trends, ", nt,
-                 collapse = ""))
+      stop("Length of 'LUR.in' does not match number of temporal trends.")
     }
     LUR <- LUR.in
   }else{
@@ -201,23 +201,23 @@ processST <- function(STdata, ST.in){
 ##'   \item{others}{Additional fields in \code{STdata$covars} that should be added
 ##'     to the location data.frame}
 ##' }
-##'
+##' 
 ##' @title Internal Function that Extracts Locations
 ##' @param STdata \code{STdata} object with observations, covariates, trends, etc;
 ##'   see \code{\link{mesa.data.raw}}.
 ##' @param locations A list specifying which fields in \code{STdata$covars} that
 ##'   should be used for what in the location data.frame, see details.
-##'
+##' 
 ##' @return A data.frame with location information for all the sites.
 ##'
 ##' @references
 ##' D. Damian, P. D. Sampson, P. Guttorp. (2003) Variance modeling for
 ##'   nonstationary processes with temporal replications. J. Geophys. Res.:
 ##'   D24(108)
-##'
+##' 
 ##' @example Rd_examples/Ex_processLocation.R
-##'
-##' @author Johan Lindstr?m
+##' 
+##' @author Johan Lindstrom
 ##' @family STmodel functions
 ##' @export
 processLocation <- function(STdata, locations){
@@ -225,7 +225,7 @@ processLocation <- function(STdata, locations){
   stCheckClass(STdata, "STdata", name="STdata")
   ##check for fields
   stCheckFields(locations, "coords", name="locations")
-
+  
   ##default beta and nu coordinates to the over all coordinates.
   if( is.null(locations$coords.beta) ){
     locations$coords.beta <- locations$coords

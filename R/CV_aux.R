@@ -71,7 +71,7 @@
 ##' 
 ##' @example Rd_examples/Ex_createCV.R
 ##' 
-##' @author Johan Lindström
+##' @author Johan Lindstrom
 ##' @family STmodel functions
 ##' @family cross-validation functions
 ##' @export
@@ -253,7 +253,7 @@ createCV <- function(STmodel, groups=10, min.dist=.1, random=FALSE,
 ##' 
 ##' @example Rd_examples/Ex_dropObservations.R
 ##' 
-##' @author Johan Lindström
+##' @author Johan Lindstrom
 ##' @family STmodel functions
 ##' @family cross-validation functions
 ##' @export
@@ -343,7 +343,7 @@ stCheckInternalCV <- function(Ind.cv, Icv.vector=TRUE){
 ##' The function requires one of \code{location} and \code{type} to be
 ##' specified, if both are given \code{location} \emph{will be used over}
 ##' \code{type}. If \code{type} is given locations such that \cr
-##' \code{as.character(STmodel$locations$type) %in% type} \cr will be
+##' \code{as.character(STmodel$locations$type) \%in\% type} \cr will be
 ##' used.
 ##' 
 ##' Given a set of locations the function computes 4 sets of naive prediction
@@ -380,7 +380,8 @@ stCheckInternalCV <- function(Ind.cv, Icv.vector=TRUE){
 ##' 
 ##' @example Rd_examples/Ex_predictNaive.R
 ##' 
-##' @author Johan Lindström
+##' @author Johan Lindstrom
+##' @importFrom stats lm
 ##' @family STmodel functions
 ##' @family cross-validation functions
 ##' @export
@@ -444,7 +445,7 @@ predictNaive <- function(STmodel, locations=NULL, type=NULL){
     IND.tmp <- STmodel$obs$ID==IND.loc[i]
     pred.tmp[,i] <- STmodel$F %*%
       lm(STmodel$obs$obs[IND.tmp] ~
-         STmodel$F[IND.tmp,]-1)$coefficients
+                   STmodel$F[IND.tmp,]-1)$coefficients
   }
   for(i in unique(STmodel$obs$ID)){
     pred[pred$ID==i,3] <- pred.tmp[STmodel$obs$ID==i,IND.closest[1,i]]
@@ -488,7 +489,7 @@ predictNaive <- function(STmodel, locations=NULL, type=NULL){
 ##'
 ##' @example Rd_examples/Ex_computeLTA.R
 ##' 
-##' @author Johan Lindström
+##' @author Johan Lindstrom
 ##' @family predCVSTmodel functions
 ##' @family cross-validation functions
 ##' @export

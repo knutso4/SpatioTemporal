@@ -28,7 +28,7 @@
 ##' 
 ##' @example Rd_examples/Ex_genGradient.R
 ##' 
-##' @author Johan Lindström
+##' @author Johan Lindstrom
 ##' 
 ##' @family numerical derivatives
 ##' @export
@@ -113,6 +113,10 @@ genHessian <- function(x, func, h=1e-3){
 ##' @param x.fixed Parameters to keep fixed, see \code{\link{loglikeST}}.
 ##' @param h,diff.type Step length and type of finite difference to use when
 ##'   computing gradients, see \code{\link{genGradient}}.
+##' @param STinit Output from call to \code{loglikeSTinit}, see \code{\link{loglikeST}} 
+##'   for details. A pre-computed \code{STinit}-object can be used to speed up 
+##'   repeated function calls. All information regarding \code{STmodel}, \code{type} and
+##'   \code{x.fixed} is collected in the \code{STinit}-object.
 ##' 
 ##' @return Returns the gradient or Hessian for the \code{\link{loglikeST}}
 ##'   and \code{\link{loglikeSTnaive}} functions.
@@ -123,39 +127,41 @@ genHessian <- function(x, func, h=1e-3){
 ##' 
 ##' @example Rd_examples/Ex_loglikeSTGrad.R
 ##' 
-##' @author Johan Lindström
+##' @author Johan Lindstrom
 ##' 
 ##' @family likelihood functions
 ##' @family numerical derivatives
 ##' @export
-loglikeSTGrad <- function(x, STmodel, type="p", x.fixed=NULL,
-                         h=1e-3, diff.type=0){
-  func <- function(x0){ loglikeST(x0, STmodel, type, x.fixed) }
+loglikeSTGrad <- function(x, STmodel, type="p", x.fixed=NULL, h=1e-3, diff.type=0, 
+                          STinit=loglikeSTinit(STmodel, type, x.fixed)){
+  func <- function(x0){ do.call(loglikeST_cpp ,c(list(x=x0), STinit)) }
   df <- genGradient(x, func, h=h, diff.type=diff.type)
   return(df)
 }
 
 ##' @rdname loglikeSTGrad
 ##' @export
-loglikeSTHessian <- function(x, STmodel, type="p", x.fixed=NULL, h=1e-3){
-  func <- function(x0){ loglikeST(x0, STmodel, type, x.fixed) }
+loglikeSTHessian <- function(x, STmodel, type="p", x.fixed=NULL, h=1e-3,
+                             STinit=loglikeSTinit(STmodel, type, x.fixed)){
+  func <- function(x0){ do.call(loglikeST_cpp ,c(list(x=x0), STinit)) }
   H <- genHessian(x, func, h=h)
   return(H)
 }
 
 ##' @rdname loglikeSTGrad
 ##' @export
-loglikeSTnaiveGrad <- function(x, STmodel, type="p", x.fixed=NULL,
-                              h=1e-3, diff.type=0){
-  func <- function(x0){ loglikeSTnaive(x0, STmodel, type, x.fixed) }
+loglikeSTnaiveGrad <- function(x, STmodel, type="p", x.fixed=NULL, h=1e-3, diff.type=0,
+                               STinit=loglikeSTinit(STmodel, type, x.fixed)){
+  func <- function(x0){ do.call(loglikeSTnaive_cpp ,c(list(x=x0), STinit)) }
   df <- genGradient(x, func, h=h, diff.type=diff.type)
   return(df)
 }
 
 ##' @rdname loglikeSTGrad
 ##' @export
-loglikeSTnaiveHessian <- function(x, STmodel, type="p", x.fixed=NULL, h=1e-3){
-  func <- function(x0){ loglikeSTnaive(x0, STmodel, type, x.fixed) }
+loglikeSTnaiveHessian <- function(x, STmodel, type="p", x.fixed=NULL, h=1e-3,
+                                  STinit=loglikeSTinit(STmodel, type, x.fixed)){
+  func <- function(x0){ do.call(loglikeSTnaive_cpp ,c(list(x=x0), STinit)) }
   H <- genHessian(x, func, h=h)
   return(H)
 }

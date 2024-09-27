@@ -10,29 +10,35 @@
 ##' Estimates parameters of the spatio-temporal model using maximum-likelihood,
 ##' profile maximum likelihood or restricted maximum likelihood (REML). The
 ##' function uses the \emph{L-BFGS-B} method in \code{\link[stats:optim]{optim}}
-##' to maximise \code{\link{loglikeST}}.
+##' to maximize \code{\link{loglikeST}}.
 ##' 
-##' The starting point(s) for the optimisation can either contain both
+##' The starting point(s) for the optimization can either contain both
 ##' regression parameters and log-covariances parameters for a total of
 ##' \code{loglikeSTdim(object)$nparam} parameters or only contain the
 ##' log-covariances covariances parameters \cr
 ##' i.e. \code{loglikeSTdim(object)$nparam.cov} parameters. \cr
 ##' If regression parameters are given but not needed (\code{type!="f"}) they
 ##' are dropped; if they are needed but not given they are inferred through a
-##' generalised least squares (GLS) computation, obtained by calling
+##' generalized least squares (GLS) computation, obtained by calling
 ##' \code{\link{predict.STmodel}}.
 ##' 
-##' If multiple starting points are used this function returns all optimisation
+##' If multiple starting points are used this function returns all optimization
 ##' results, along with an indication of the best result. The best result is
-##' determined by first evaluating which of the optimisations have converged.
+##' determined by first evaluating which of the optimization have converged.
 ##' Convergence is determined by checking that the output from
 ##' \code{\link[stats:optim]{optim}} has \code{convergence==0} and that the
 ##' \code{hessian} is negative definite, \cr
 ##' i.e. \code{all(eigen(hessian)$value < -1e-10)}. \cr
-##' Among the converged optimisations the one with the highest log-likelihood
-##' value is then selected as the best result.
+##' Among the converged optimization the one with the highest log-likelihood
+##' value is then selected as the best result. 
 ##' 
-##' If none of the optimisations have converged the result with the highest
+##' Parameter uncertainties are based on the \code{hessian} (using the diagonal 
+##' elements of the negative inverse Hessian); \code{NA} if the Hessian is not invertible.
+##' For profile or REML estimation regression parameters and their uncertainties are 
+##' obtained from generalized least squares (GLS) computation, obtained by calling 
+##' \code{\link{predict.STmodel}}.
+##' 
+##' If none of the optimizations have converged the result with the highest
 ##' log-likelihood value is selected as the best result.
 ##' 
 ##' Most of the elements in \code{res.best} (and in \code{res.all[[i]]}) are
@@ -77,9 +83,8 @@
 ##'   \emph{restricted maximum likelihood} (REML).
 ##' @param h,diff.type Step length and type of finite difference to use when
 ##'   computing gradients, see \code{\link{loglikeSTGrad}}.
-##' @param hessian.all If \code{type!="f"} computes hessian (and uncertainties)
-##'   for both regression and \emph{log}-covariance parameters, not only for
-##'   \emph{log}-covariance parameters. See \code{value} below.
+##' @param hessian.all If \code{type=="p"} computes joint hessian for both regression and
+##'  \emph{log}-covariance parameters.
 ##' @param lower,upper,method Parameter bound and optimisation method,
 ##'   passed to \code{\link[stats:optim]{optim}}.
 ##' @param control A list of control parameters for the optimisation.
@@ -103,9 +108,10 @@
 ##' 
 ##' @example Rd_examples/Ex_estimate_STmodel.R
 ##' 
-##' @author Johan Lindström
+##' @author Johan Lindstrom
 ##' @family STmodel methods
 ##' @family estimateSTmodel methods
+##' @importFrom stats optim
 ##' @method estimate STmodel
 ##' @export
 estimate.STmodel <- function(object, x, x.fixed=NULL, type="p",
@@ -123,6 +129,8 @@ estimate.STmodel <- function(object, x, x.fixed=NULL, type="p",
   type <- tolower(type) 
   ##first check that type is valid
   stCheckType(type)
+  ##also hessian.all only makes sense for the profile likelihood case:
+  hessian.all = hessian.all && type=="p"
   
   ##Second check the input x
   x <- as.matrix(x)
@@ -135,13 +143,16 @@ estimate.STmodel <- function(object, x, x.fixed=NULL, type="p",
   x.all <- tmp$x.all
   x <- tmp$x
   x.fixed <- tmp$x.fixed
-
+  
+  ##Precompute STinit struct
+  object.init <- loglikeSTinit(object, type, x.fixed)
+  
   ##Default values for control
   control <- defaultList(control, eval(formals(estimate.STmodel)$control) )
                                     
   ##define local version of gradient function, fixing h and diff.type
-  loglikeSTGrad.loc <- function(x, STmodel, type, x.fixed){
-    loglikeSTGrad(x, STmodel, type, x.fixed, h=h, diff.type=diff.type)
+  loglikeSTGrad.loc <- function(x, STinit){
+    loglikeSTGrad(x=x, STinit=STinit, h=h, diff.type=diff.type)
   }##function loglikeSTGrad.loc
 
   ##attempt to fit the model for each of the provided starting values.
@@ -151,19 +162,11 @@ estimate.STmodel <- function(object, x, x.fixed=NULL, type="p",
   value <- rep(NA, dim(x)[2])
 
   ##make sure that likelihood evaluates
-  err <- tryCatch( loglikeST(x[,1], STmodel=object, type=type,
-                             x.fixed=x.fixed), silent=TRUE )
+  err <- tryCatch( loglikeST_internal(x[,1], object.init), silent=TRUE )
   if( inherits(err,"try-error") ){
     stop( paste("log-likelihood fails at first starting point with:\n",
                 err[[1]]) )
   }
-  
-  #############
-  # J. Keller edit
-  # Define local version of the likelihood function, to use in calculating
-  # Hessians using numDeriv package
-  loglikeST.loc <- function(x) loglikeST(x, object)
-  ############
   
   ##ensure that we are doing maximisation
   control$fnscale <- -1
@@ -176,39 +179,23 @@ estimate.STmodel <- function(object, x, x.fixed=NULL, type="p",
     x.start <- x[,i]
     i.restart <- 0
     while(i.restart<=restart && !conv[i]){
-      try( res[[i]] <- optim(x.start, loglikeST, gr=loglikeSTGrad.loc,
-                             STmodel=object, type=type, x.fixed=x.fixed,
-                             method=method, control=control, hessian=FALSE,
+      try( res[[i]] <- optim(x.start, loglikeST_internal, gr=loglikeSTGrad.loc,
+                             STinit=object.init, method=method, 
+                             control=control, hessian=TRUE,
                              lower=lower, upper=upper), silent=TRUE)
       if( all( !is.na(res[[i]]) ) ){
         ##optim done, let's see if we've converged and update starting point
         x.start <- res[[i]]$par
+        ##compute convergence criteria
+        conv[i] <- (res[[i]]$convergence==0 &&
+                    all(eigen(res[[i]]$hessian)$value < -1e-10))
       }else{
         ##error occured in optim, break
         break
       }
       ##increase counter
       i.restart <- i.restart+1
-    }##while(i.restart<=restart && !optim.done)
-	
-	# Calculate Hessian using numDeriv package
-    #############
-	# J. Keller edit
-    res[[i]]$hessian <- numDeriv::hessian(loglikeST.loc, res[[i]]$par)
-    ###############	
-	
-	##compute convergence criteria
-        conv[i] <- (res[[i]]$convergence==0 &&
-                    all(eigen(res[[i]]$hessian)$value < -1e-10))
-	
-	
-	##add standard deviations
-	  par.sd <- sqrt(-diag(tryCatch(solve(res[[i]]$hessian), error=function(e) rep(NA, length(res[[i]]$par)))))
-	if(!is.numeric(par.sd)){
-	  conv[i] <- FALSE
-	  message("Hessian not positive definite -- trying next starting value.")
-	  next
-	}
+    }##while(i.restart<=restart && !conv[i])
     if( control$trace!=0 ){
       message("") ##spacing
     }
@@ -229,6 +216,11 @@ estimate.STmodel <- function(object, x, x.fixed=NULL, type="p",
                                      init=double(dimensions$nparam),
                                      tstat=double(dimensions$nparam))
      
+      ##add standard deviations (only relevant if converged, i.e. Hessian pos-def)
+      ##Use try catch to return NA on error or warning
+      par.sd <- tryCatch(sqrt(-diag(solve(res[[i]]$hessian))), 
+                         error=function(cond){return(NA)}, 
+                         warning=function(cond){return(NA)}, silent=TRUE)
       ##initial value
       if( type!="f" ){
         par.type <- "par.cov"
@@ -243,20 +235,26 @@ estimate.STmodel <- function(object, x, x.fixed=NULL, type="p",
       res[[i]][[par.type]]$sd[is.na(x.fixed)] <- par.sd
       
       if( type!="f" ){
-        ##compute regression parameters
+        ##compute regression parameters and their variances
         tmp <- predict(object, res[[i]]$par.cov$par, only.pars=TRUE,
-                       pred.var=FALSE, type=type)$pars
-        res[[i]]$par.all$par <- c(tmp$gamma.E, tmp$alpha.E, res[[i]]$par.cov$par)
-        N.reg <- length(tmp$gamma.E)+length(tmp$alpha.E)
-        res[[i]]$par.all$sd <- c(rep(NA,N.reg), res[[i]]$par.cov$sd)
+                       pred.var=FALSE, type=type)
+        ##extract regression parameters
+        res[[i]]$par.all$par <- c(tmp$pars$gamma.E, tmp$pars$alpha.E, res[[i]]$par.cov$par)
+        N.reg <- length(tmp$pars$gamma.E)+length(tmp$pars$alpha.E)
+        ##extract standard deviations for the regression parameters
+        tmp <- sqrt(c(diag(tmp$par$gamma.V),diag(tmp$pars$alpha.V)))
+        ##and combine with results for the covariance parameters
+        res[[i]]$par.all$sd <- c(tmp, res[[i]]$par.cov$sd)
+        ##regression parameters have no initial values and are not fixed
         res[[i]]$par.all$init <- c(rep(NA,N.reg), x.all[,i])
         res[[i]]$par.all$fixed <- c(rep(NA,N.reg), x.fixed)
       }else{
+        ##For the full case we rather need to extract only covariance parameters
         ##all the covariance parameters
         I <- (dimensions$nparam-dimensions$nparam.cov+1):dimensions$nparam
         res[[i]]$par.cov <- res[[i]]$par.all[I,,drop=FALSE]
       }
-      ##t-statistic
+      ##compute t-statistic for all parameters
       res[[i]]$par.cov$tstat <- res[[i]]$par.cov$par / res[[i]]$par.cov$sd
       res[[i]]$par.all$tstat <- res[[i]]$par.all$par / res[[i]]$par.all$sd
       
@@ -306,22 +304,14 @@ estimate.STmodel <- function(object, x, x.fixed=NULL, type="p",
   summary <- list(status=status, par.all=par.all, par.cov=par.cov, x.fixed=x.fixed)
   
   if(hessian.all==TRUE){
-    if(type!="f"){
-      x.fixed <- res.best$par.all$fixed
-      x <- res.best$par.all$par[ is.na(x.fixed) ]
-      res.best$hessian.all <- loglikeSTHessian(x, object, type="f",
-                                               x.fixed=x.fixed, h=h)
-      ##standard error
-      suppressWarnings( par.sd <- sqrt(-diag(solve(res.best$hessian.all))) )
-      res.best$par.all$sd <- NA
-      res.best$par.all$sd[ is.na(x.fixed) ] <- par.sd
-      ##update t-statistic for the best result, all parameters
-      res.best$par.all$tstat <- res.best$par.all$par/res.best$par.all$sd
-    }else{
-      ##replicate hessian for all parameters so output is consistent
-      res.best$hessian.all <- res.best$hessian
-    }
-  }##if(hessian.all==TRUE)
+    x.fixed <- res.best$par.all$fixed
+    x <- res.best$par.all$par[ is.na(x.fixed) ]
+    res.best$hessian.all <- loglikeSTHessian(x, object, type="f",
+                                             x.fixed=x.fixed, h=h)
+  }else if(type=='f'){
+    ##replicate hessian for all parameters so output is consistent
+    res.best$hessian.all <- res.best$hessian
+  }##if(hessian.all==TRUE) ... elseif type=='f'
   
   ##return result
   out <- list(res.best=res.best, res.all=res, summary=summary)
@@ -340,7 +330,7 @@ estimate.STmodel <- function(object, x, x.fixed=NULL, type="p",
 ##' @param ... Ignored additional arguments.
 ##' @return Nothing
 ##'
-##' @author Johan Lindström
+##' @author Johan Lindstrom
 ##'
 ##' @examples
 ##'   ##load data
@@ -405,7 +395,7 @@ print.estimateSTmodel <- function(x, ...){
 ##' @param ... Ignored additional arguments.
 ##' @return Estimated parameters.
 ##'
-##' @author Johan Lindström
+##' @author Johan Lindstrom
 ##'
 ##' @examples
 ##'   ##load data

@@ -1,14 +1,14 @@
 ##' Package for spatio-temporal modelling. Contains functions that estimate,
 ##' simulate and predict from the model described in (Szpiro et.al., 2010;
-##' Sampson et.al., 2011; Lindström et.al., 2010). The package also
+##' Sampson et.al., 2011; Lindstrom et.al., 2010). The package also
 ##' contains functions that handle missing data SVD in accordance with
 ##' (Fuentes et.al. 2006).
 ##' \cr
 ##' \tabular{ll}{
 ##'   Package: \tab SpatioTemporal\cr
 ##'   Type: \tab Package\cr
-##'   Version: \tab 1.1.7\cr
-##'   Date: \tab 2013-08-12\cr
+##'   Version: \tab 1.3.1\cr
+##'   Date: \tab 2020-02-29\cr
 ##'   License: \tab GPL version 2 or newer\cr
 ##'   LazyLoad: \tab yes\cr
 ##' }
@@ -31,7 +31,7 @@
 ##' and therefore does not necessarily reflect the views of the Agency and no
 ##' official endorsement should be inferred.
 ##' \cr
-##' Travel for J. Lindström has been paid by STINT (The
+##' Travel for J. Lindstrom has been paid by STINT (The
 ##' Swedish Foundation for International Cooperation in Research and Higher
 ##' Education) Grant IG2005-2047.
 ##' \cr
@@ -41,6 +41,16 @@
 ##'
 ##' @section Changelog:
 ##' \describe{
+##'   \item{1.2.1}{Replaced Matrix with spam}
+##'   \itemize{
+##'     \item{Changed block matrices sigmaNu and sigmaB to use sparse
+##'           matrices from the spam-package. Major reduction in memory usage
+##'   and speed. Due to numerical issues with the order of matrix operations
+##'   parameter estimates and predictions might change slightly (order of
+##'   0.01).}
+##'     \item{Minor changes to comply with R 3.?.?}
+##'     \item{Removed a number of functions deprecated since 1.0.0}
+##'   }
 ##'   \item{1.1.7}{Upates: Handling of log-Gaussian fields}
 ##'   \itemize{
 ##'     \item{Updated several functions to allow for prediction and CV of
@@ -191,7 +201,7 @@
 ##'   \item{0.1.0}{First released version, short course at TIES-2010}
 ##' }
 ##' 
-##' @author Johan Lindström, Adam Szpiro, Paul D. Sampson,
+##' @author Johan Lindstrom, Adam Szpiro, Paul D. Sampson,
 ##' Silas Bergen, Assaf P. Oron
 ##' 
 ##' @references
@@ -204,9 +214,9 @@
 ##' 
 ##' M. Fuentes, P. Guttorp, and P. D. Sampson. (2006) Using Transforms to
 ##'  Analyze Space-Time Processes in Statistical methods for spatio-temporal
-##'  systems (B. Finkenstädt, L. Held, V. Isham eds.) 77-150
+##'  systems (B. Finkenst?dt, L. Held, V. Isham eds.) 77-150
 ##' 
-##' J. Lindström, A. Szpiro, P. D. Sampson, L. Sheppard, A. Oron,
+##' J. Lindstrom, A. Szpiro, P. D. Sampson, L. Sheppard, A. Oron,
 ##'   M. Richards, and T. Larson T. (2010) A flexible spatio-temmporal model for
 ##'   air pollution: allowing for spatio-temporal covariates. Berkeley Electronic
 ##'   Press, University of Washington Biostatistics Working Paper Series, No. 370.
@@ -217,10 +227,12 @@
 ##'   concentrations with complex spatio-temporal dependencies. Environmetrics:
 ##'   21, 606-631.
 ##'
-##' P. D. Sampson, A. Szpiro, L. Sheppard, J. Lindström, J. D.  Kaufman. (2011)
+##' P. D. Sampson, A. Szpiro, L. Sheppard, J. Lindstrom, J. D.  Kaufman. (2011)
 ##'   Pragmatic Estimation of a Spatio-temporal Air Quality Model with Irregular
 ##'   Monitoring Data. Atmospheric Environment: 45(36), 6593-6606.
 ##' 
 ##' @keywords package
 ##' @example Rd_examples/Ex_SpatioTemporal_package.R
+##' @useDynLib SpatioTemporal, .registration = TRUE
+##' @import Matrix
 NULL

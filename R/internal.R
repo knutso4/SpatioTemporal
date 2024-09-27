@@ -135,7 +135,7 @@ internalComputeLTA <- function(LTA, EX, T, V=NULL, V.pred=NULL,
   
   for(j in 1:length(LTA)){
     Ind.LTA <- T %in% LTA[[j]]
-    LTA.tmp.res <- colMeans(EX[Ind.LTA,,drop = FALSE])
+    LTA.tmp.res <- colMeans(EX[Ind.LTA,])
     
     if( !is.null(V) ){
       LTA.tmp.res <- c(LTA.tmp.res,
@@ -171,6 +171,11 @@ internalPlotFixArgs <- function(args, default=NULL, add=NULL){
 ###########################################################################
 ## Parts of S3 plot that are common for predictSTmodel and predCVSTmodel ##
 ###########################################################################
+##' @importFrom graphics abline
+##' @importFrom graphics lines
+##' @importFrom graphics points
+##' @importFrom graphics polygon
+##' @importFrom stats qnorm
 internalPlotPredictions <- function(plot.type, ID, pred, obs, col, pch, cex,
                                     lty, lwd, p, add, transform=NULL, ...){
   ##compute the quantile
@@ -229,7 +234,7 @@ internalPlotPredictions <- function(plot.type, ID, pred, obs, col, pch, cex,
   }
   ##Plot the polygon, NA if missing -> no polygon
   polygon(c(t,rev(t)), c(CI.u, rev(CI.l)),
-          border=col[3], col=col[3])
+                    border=col[3], col=col[3])
   ##plot the predictions
   col.1 <- col[1]
   if( col.1=="ID" ){
@@ -456,6 +461,8 @@ createSTmodelInternalDistance <- function(STmodel){
 ########################################################################
 ## Common helper functions for S3 qqnorm.STdata/STmodel/predCVSTmodel ##
 ########################################################################
+##' @importFrom graphics abline
+##' @importFrom stats qqline
 internalQQnormPlot <- function(Y, ID, main, group, col, norm, line, ...){
   ##check inputs, first ID
   ID.unique <- unique(Y$ID)
@@ -512,6 +519,9 @@ internalQQnormPlot <- function(Y, ID, main, group, col, norm, line, ...){
 #############################################################################
 ## Common helper functions for S3 scatterPlot.STdata/STmodel/predCVSTmodel ##
 #############################################################################
+##' @importFrom graphics plot
+##' @importFrom graphics points
+##' @importFrom stats loess.smooth
 internalScatterPlot <- function(obs, covar, trend, data, subset, group, pch,
                                 col, cex, lty, add, smooth.args, ...){
   ##need to specify either covar or trend
@@ -580,7 +590,7 @@ internalScatterPlot <- function(obs, covar, trend, data, subset, group, pch,
       x <- x[match(obs$date, data$trend$date),,drop=FALSE]
     }
   }
-  ##stack x,y and create vectors fro loess.smooth
+  ##stack x,y and create vectors for loess.smooth
   XY <- cbind(x,y)
   x <- x[,1]
   y <- y[,1]
@@ -637,6 +647,8 @@ internalSTmodelCreateF <- function(STmodel){
 ###################################################################
 ## Common helper functions for predictCV, computes CV-statistics ##
 ###################################################################
+##' @importFrom stats var
+##' @importFrom stats qnorm
 internalSummaryPredCVSTmodel <- function(pred.struct, EX.names, transform,
                                          opts, I.n, out){
   obs <- transform( pred.struct$obs )
@@ -666,5 +678,3 @@ internalSummaryPredCVSTmodel <- function(pred.struct, EX.names, transform,
   }
   return(out)
 }##function internalSummaryPredCVSTmodel
-
-

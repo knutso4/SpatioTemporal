@@ -31,3 +31,7 @@ plot(mesa.data.detrend2, "loc.obs", legend.loc="bottomleft")
 ##compare the two fitted and removed trends
 print(mesa.data.detrend$fit.trend)
 print(mesa.data.detrend2$fit.trend)
+
+
+##TODO add method example using \code{\link[MASS:rlm]{rlm}}, or \code{\link[MASS:lqs]{lqs}}.
+

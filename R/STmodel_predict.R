@@ -129,7 +129,7 @@
 ##' 
 ##' @example Rd_examples/Ex_predict_STmodel.R
 ##' 
-##' @author Johan Lindstr?m
+##' @author Johan Lindstrom
 ##' 
 ##' @family STmodel methods
 ##' @family predictSTmodel methods
@@ -141,11 +141,6 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
                             pred.covar=FALSE, beta.covar=FALSE,
                             combine.data=FALSE, type="p", LTA=FALSE, 
                             transform=c("none","unbiased","mspe"), ...){
-
-
-    if(is.null(object$trend$date)){
-      stop("Trend within model object (object$trend) must contain more than 0 dates.")} 
-
 ##################################
 ### INITIAL SETUP AND CHECKING ###
   ##check class belongings
@@ -184,7 +179,7 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
   }
   ##only.pars is strange when type=="f"
   if( only.pars && type=="f"){
-    warning("only.pars=TRUE and type=(f)ull only returns KNOWN parameters.",
+    warning("only.pars=TRUE and type=f(ull) only returns KNOWN parameters.",
             immediate. = TRUE)
   }
   ##only.pars, and we can ignore a bunch of things
@@ -256,7 +251,7 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
       }
       ##and fix the trend (right no of trends, names and dates)
       suppressMessages(STdata <- updateTrend(STdata, fnc=object$trend.fnc,
-                                             extra.dates=object$trend$date))
+                                             extra.dates=STdata$trend$date))
       
       ##since we're not using covariances for the prediction locations
       ##(specified seperately in nugget.unobs), we just pick a simple covariance
@@ -268,7 +263,7 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
                               cov.beta=object$cov.beta, cov.nu=cov.nu,
                               locations=object$locations.list,
                               scale=!is.null(object$scale.covars),
-                              scale.covars=object$scale.covars,calc_dist_matrix=FALSE)
+                              scale.covars=object$scale.covars)
     }else{
       ##STdata is an STmodel object ->
       ##test for consistent covariates and scaling (only equal scaling allowed).
@@ -364,7 +359,7 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
     Fobs <- expandF(object$F, object$obs$idx, n.loc=dimensions$n.obs)
   
     ##Create the Xtilde = [M FX] matrix
-    Xtilde <- as.matrix( Fobs %*% Matrix::bdiag(object$LUR) )
+    Xtilde <- as.matrix( Fobs %*% bdiag(object$LUR) )
     ##Add the spatio-temporal covariate (if it exists)
     if( dimensions$L!=0 ){
       Xtilde <- cbind(object$ST, Xtilde)
@@ -378,21 +373,17 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
                               type = object$cov.nu$covf,
                               nugget = cov.pars.nu$nugget,
                               random.effect = cov.pars.nu$random.effect,
-                              blocks1 = object$nt, ind1 = object$obs$idx,
-                              sparse=TRUE)
-    ##calculate block cholesky factor of the matrices, in-place to conserve memory
-    i.sigma.B <- makeCholBlock(i.sigma.B, n.blocks=dimensions$m)
-    i.sigma.nu <- chol(i.sigma.nu)
-    ##invert the matrices, in-place to conserve memory
-    i.sigma.B <- invCholBlock(i.sigma.B, n.blocks=dimensions$m)
-    i.sigma.nu <- chol2inv(i.sigma.nu)
-
+                              blocks1 = object$nt, ind1 = object$obs$idx)
+    ##calculate cholesky factor of the sparse matrices, and the inversion; in-place to conserve memory
+    i.sigma.B <- solve(i.sigma.B)
+    i.sigma.nu <- solve(i.sigma.nu)
+    
     ##F'*inv(sigma.nu)
     tF.iS <- t(Fobs) %*% i.sigma.nu
     ##F'*inv(sigma.nu)*F
     tF.iS.F <- as.matrix(tF.iS %*% Fobs)
     ##inv(sigma.B|Y) = F'*inv(sigma.nu)*F + inv(sigma.B)
-    R.i.sigma.B.Y <- tF.iS.F + i.sigma.B
+    R.i.sigma.B.Y <- as.matrix(tF.iS.F + i.sigma.B)
     ##calculate cholesky factor of inv(sigma.B|Y)
     R.i.sigma.B.Y <- chol(R.i.sigma.B.Y)
     
@@ -401,12 +392,12 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
     iS.Y <- i.sigma.nu %*% object$obs$obs
   
     ##compute F'*iSigma.nu*Xtilde and F'*iSigma.nu*Y
-    tF.iS.X <- as.matrix(t(Fobs) %*% iS.X)
-    tF.iS.Y <- as.matrix(t(Fobs) %*% iS.Y)
+    tF.iS.X <- t(Fobs) %*% iS.X
+    tF.iS.Y <- t(Fobs) %*% iS.Y
     
     ##compute inv(sigma.B|Y)*F'*iSigma.nu*Xtilde
-    iSBY.tF.iS.X <- solveTriBlock(R.i.sigma.B.Y, tF.iS.X, transpose=TRUE)
-    iSBY.tF.iS.X <- solveTriBlock(R.i.sigma.B.Y, iSBY.tF.iS.X, transpose=FALSE)
+    iSBY.tF.iS.X <- backsolve(R.i.sigma.B.Y, tF.iS.X, transpose=TRUE)
+    iSBY.tF.iS.X <- backsolve(R.i.sigma.B.Y, iSBY.tF.iS.X, transpose=FALSE)
   }#if(type!="f" || !only.pars)
   
 ###############################################
@@ -423,15 +414,15 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
     gamma.alpha <- as.matrix(c(gamma.E,alpha.E))
   }else{
     ##compute inv(Xtilde'*Sigma^-1*Xtilde) (and force symmetric)
-    i.XSX <- as.matrix( t(Xtilde) %*% iS.X )
-    i.XSX <- symmpart(i.XSX - t(tF.iS.X) %*% iSBY.tF.iS.X)
+    i.XSX <- t(Xtilde) %*% iS.X
+    i.XSX <- i.XSX - t(tF.iS.X) %*% iSBY.tF.iS.X
     
     ##compute t(Xtilde'*Sigma^-1*Y)
-    tmp2 <- as.matrix( object$obs$obs %*% iS.X )
+    tmp2 <- object$obs$obs %*% iS.X
     tmp2 <- tmp2 - t(tF.iS.Y) %*% iSBY.tF.iS.X
     
     ##compute alpha and gamma
-    gamma.alpha <- solve(i.XSX, t(tmp2))
+    gamma.alpha <- as.matrix( solve(i.XSX, t(tmp2)) )
 
     ##extract computed parameters
     if(dimensions$L!=0){
@@ -442,7 +433,7 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
       alpha.E <- c(gamma.alpha)
     }
     ##compute the variances
-    i.XSX <- solve(i.XSX)
+    i.XSX <- as.matrix( solve(i.XSX) )
     if(dimensions$L!=0){
       gamma.V <- i.XSX[1:dimensions$L,1:dimensions$L,drop=FALSE]
       alpha.V <- i.XSX[-c(1:dimensions$L),-c(1:dimensions$L),drop=FALSE]
@@ -506,16 +497,16 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
   iS.C <- iS.Y - iS.X %*% gamma.alpha
   
   ##compute inv(sigma.B|Y)*F'*iSigma.nu*(C-mu)
-  iSBY.tF.iS.C <- solveTriBlock(R.i.sigma.B.Y, tF.iS.C, transpose=TRUE)
-  iSBY.tF.iS.C <- solveTriBlock(R.i.sigma.B.Y, iSBY.tF.iS.C, transpose=FALSE)
+  iSBY.tF.iS.C <- backsolve(R.i.sigma.B.Y, tF.iS.C, transpose=TRUE)
+  iSBY.tF.iS.C <- backsolve(R.i.sigma.B.Y, iSBY.tF.iS.C, transpose=FALSE)
   
   ##compute iSigma.tilde*(C-mu)
   ##this is the same for all the conditionals...
-  iSoo.C <- as.matrix( iS.C - t( tF.iS ) %*% iSBY.tF.iS.C )
+  iSoo.C <- iS.C - t(tF.iS) %*% iSBY.tF.iS.C
 
   ##for REML we also need iSigma.tilde*Xtilde
   if( out$opts$type=="r" ){
-    iSoo.Xtilde <- as.matrix( iS.X - t(tF.iS) %*% iSBY.tF.iS.X )
+    iSoo.Xtilde <- iS.X - t(tF.iS) %*% iSBY.tF.iS.X
   }
 
   ##remove variables not needed
@@ -573,7 +564,7 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
   ##extract sparse matrices
   Funobs <- expandF(Funobs, idx.unobs, n.loc=N.unobs)
   ##compute LUR times the temporal trends [M F*X] for unobserved
-  Xtilde.unobs <- as.matrix( Funobs %*% Matrix::bdiag(STdata$LUR.all) )
+  Xtilde.unobs <- as.matrix( Funobs %*% bdiag(STdata$LUR.all) )
   if( dimensions$L!=0 ){
     Xtilde.unobs <- cbind(ST.unobs, Xtilde.unobs)
   }
@@ -582,7 +573,7 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
 ### COMPUTE BETA FIELDS ###
   ##compute LUR*alpha (mean values for the beta fields)
   out$beta <- list()
-  out$beta$mu <- matrix(Matrix::bdiag(STdata$LUR.all) %*% out$pars$alpha.E,
+  out$beta$mu <- matrix(bdiag(STdata$LUR.all) %*% out$pars$alpha.E,
                         ncol=length(STdata$LUR.all))
   colnames(out$beta$mu) <- names(STdata$LUR.all)
   rownames(out$beta$mu) <- rownames( STdata$LUR.all[[1]] )
@@ -606,7 +597,7 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
                           dist = crossDist(loc.unobs.beta, loc.obs.beta),
                           type = object$cov.beta$covf,
                           nugget = cov.pars.beta$nugget,
-                          ind2.to.1=Ind.2.1, sparse=TRUE)
+                          ind2.to.1=Ind.2.1)
 
   ##The right most part is F'*iSigma.tilde*(C-mu)
   out$beta$EX <- out$beta$mu + matrix(sigma.B.C %*% (t(Fobs) %*% iSoo.C),
@@ -615,13 +606,15 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
   ##and variances
   if( out$opts$pred.var ){
     Sby.iSb.Sou <- as.matrix( i.sigma.B %*% t(sigma.B.C) )
-    Sby.iSb.Sou <- solveTriBlock(R.i.sigma.B.Y, Sby.iSb.Sou, transpose=TRUE)
-    Sby.iSb.Sou <- solveTriBlock(R.i.sigma.B.Y, Sby.iSb.Sou, transpose=FALSE)
+    Sby.iSb.Sou <- backsolve(R.i.sigma.B.Y, Sby.iSb.Sou, transpose=TRUE)
+    Sby.iSb.Sou <- backsolve(R.i.sigma.B.Y, Sby.iSb.Sou, transpose=FALSE)
 
     ##contribution from REML estimate
     if( out$opts$type=="r" ){
-      var.beta.REML <- (cBind(rep(0,dimensions$L), Matrix::bdiag(STdata$LUR.all)) -
+      var.beta.REML <- (cbind(rep(0,dimensions$L),
+                              bdiag(STdata$LUR.all)) -
                         sigma.B.C %*% (t(Fobs)%*%iSoo.Xtilde))
+      
       var.beta.REML <- as.matrix(var.beta.REML)
       if( out$opts$beta.covar ){
         ##full matrix
@@ -641,7 +634,8 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
                                type = object$cov.beta$covf,
                                nugget = cov.pars.beta$nugget)
       ##compute variance matrix
-      tmp <- sigma.B.uu - sigma.B.C %*% tF.iS.F %*% Sby.iSb.Sou + V.REML
+      tmp <- as.matrix(sigma.B.uu - sigma.B.C %*% tF.iS.F %*% Sby.iSb.Sou +
+                       V.REML)
       
       out$beta$VX.full <- list()
       for(i in 1:dim(out$beta$EX)[2]){
@@ -737,6 +731,8 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
   ##cross distance for the nu coordinates
   cross.D.nu <- crossDist(loc.unobs.nu, loc.obs.nu)
 
+  ## sigma.B.C * F' (faster to compute the transpose, due to sparse matrices)
+  sigma.B.C.tF <-  t( as.matrix(Fobs %*% t(sigma.B.C)) )
   
   ##now we need to split the conditional expectation into parts to
   ##reduce the memory footprint
@@ -761,8 +757,7 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
     T1.order <- order(T1.Ind)
     
     ##create full cross-covariance matrix for all the observations
-    sigma.B.full.C <- Funobs[Ind,,drop=FALSE] %*% sigma.B.C
-    sigma.B.full.C <- t(as.matrix(Fobs%*%t(sigma.B.full.C)))
+    sigma.B.full.C <- Funobs[Ind,,drop=FALSE] %*% sigma.B.C.tF
     ##parameter order is sill, nugget, range (always predict with nugget=0)
     sigma.nu.C <- makeSigmaNu(cov.pars.nu$pars, dist = cross.D.nu,
                               type = object$cov.nu$covf, nugget = 0,
@@ -799,10 +794,11 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
       unobs.D.beta <- crossDist(loc.unobs.beta[I.loc,,drop=FALSE])
       sigma.B.uu <- makeSigmaB(cov.pars.beta$pars, dist = unobs.D.beta,
                                type = object$cov.beta$covf,
-                               nugget = cov.pars.beta$nugget, sparse=TRUE)
+                               nugget = cov.pars.beta$nugget)
       ##first the unobserved covariance matrix
+      ##cast to matrix in intermediate step for speed-up
       V.uu <- (Funobs[Ind,I.loc2,drop=FALSE] %*%
-               Matrix(sigma.B.uu %*% t(Funobs[Ind,I.loc2,drop=FALSE])))
+               as.matrix(sigma.B.uu %*% t(Funobs[Ind,I.loc2,drop=FALSE])))
       ##distance matrices for the unobserved nu locations
       unobs.D.nu <- crossDist(loc.unobs.nu[I.loc,,drop=FALSE])
       V.uu <- V.uu + makeSigmaNu(cov.pars.nu$pars, dist = unobs.D.nu,
@@ -814,9 +810,9 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
       ##compute iSigma.nu*Sigma.ou
       iS.Sou <- i.sigma.nu %*% t(sigma.nu.C)
       ##compute F'*iSigma.nu*Sigma.ou
-      tF.iS.Sou <- as.matrix(tF.iS %*% t(sigma.nu.C))
+      tF.iS.Sou <- tF.iS %*% t(sigma.nu.C)
       ##compute chol(inv(sigma.B.Y))' * (F'*iSigma.nu*Sigma.ou)
-      Sby.tF.iS.Sou <- solveTriBlock(R.i.sigma.B.Y, tF.iS.Sou, transpose=TRUE)
+      Sby.tF.iS.Sou <- backsolve(R.i.sigma.B.Y, tF.iS.Sou, transpose=TRUE)
 
       ##contribution from REML estimate
       if( out$opts$type=="r" ){
@@ -1022,7 +1018,7 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
 ##' @param ... Ignored additional arguments.
 ##' @return Nothing
 ##'
-##' @author Johan Lindstr?m
+##' @author Johan Lindstrom
 ##'
 ##' @examples
 ##'   ##load data
@@ -1031,6 +1027,7 @@ predict.STmodel <- function(object, x, STdata=NULL, Nmax=1000, only.pars=FALSE,
 ##'   
 ##' 
 ##' @family predictSTmodel methods
+##' @importFrom utils str
 ##' @method print predictSTmodel
 ##' @export
 print.predictSTmodel <- function(x, ...){
@@ -1160,7 +1157,7 @@ print.predictSTmodel <- function(x, ...){
 ##'
 ##' @example Rd_examples/Ex_plot_predictSTmodel.R
 ##'
-##' @author Johan Lindstr?m
+##' @author Johan Lindstrom
 ##' 
 ##' @family predictSTmodel methods
 ##' @method plot predictSTmodel

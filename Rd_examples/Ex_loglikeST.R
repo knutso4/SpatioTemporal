@@ -15,3 +15,9 @@ x.all <- runif( dim$nparam )
 loglikeST(x.all, mesa.model, "f")
 loglikeST(x, mesa.model, "p")
 
+##or using the two step approach
+STinit <- loglikeSTinit(mesa.model, "f")
+loglikeST_internal(x.all, STinit)
+
+STinit <- loglikeSTinit(mesa.model, "p")
+loglikeST_internal(x, STinit)

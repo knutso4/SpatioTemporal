@@ -71,9 +71,11 @@
 ##' 
 ##' @example Rd_examples/Ex_MCMC_mesa_model.R
 ##' 
-##' @author Johan Lindström
+##' @author Johan Lindstrom
 ##' @family STmodel methods
 ##' @family mcmcSTmodel methods
+##' @importFrom stats rnorm
+##' @importFrom stats runif
 ##' @method MCMC STmodel
 ##' @export
 MCMC.STmodel <- function(object, x, x.fixed=NULL, type="f", N=1000,
@@ -117,7 +119,7 @@ MCMC.STmodel <- function(object, x, x.fixed=NULL, type="f", N=1000,
     if( !all(eigen(Hessian.prop)$value < -1e-10) ){
       stop("Hessian not negative definite (some eigs > -1e-10)")
     }
-    ##compute proposal matrix from the Hessian ( inv(H)*2.38/d )
+    ##compute proposal matrix from the Hessian ( inv(H)*2.38^2/d )
     Sigma.prop <- -solve(Hessian.prop)*2.38*2.38/dim(Hessian.prop)[1]
   }
   
@@ -141,17 +143,20 @@ MCMC.STmodel <- function(object, x, x.fixed=NULL, type="f", N=1000,
   colnames(par) <- names(x.fixed)
   colnames(S) <- rownames(S) <- colnames(par)[is.na(x.fixed)]
 
+  ##Precompute STinit struct
+  object.init <- loglikeSTinit(object, type)
+  
   ##initial values
   par[1,] <- x.fixed
   par[1,is.na(x.fixed)] <- x
-  l[1] <- loglikeST(par[1,], object, type=type)
+  l[1] <- loglikeST_internal(par[1,], object.init)
   par.new <- par[1,]
   ##run MCMC
   for(i in 2:N){
     ##propose new value
     par.new[is.na(x.fixed)] <- par[i-1,is.na(x.fixed)] + S %*% rnorm(dim(S)[1])
     ##evaluate likelihood for the new value
-    l[i] <- loglikeST(par.new, object, type=type)
+    l[i] <- loglikeST_internal(par.new, object.init)
     alpha[i] <- min(exp(l[i]-l[i-1]),1)
     if( runif(1)<alpha[i] ){ #accept
       par[i,] <- par.new
@@ -194,7 +199,7 @@ MCMC <- function(object, ...){
 ##'   data(MCMC.mesa.model)
 ##'   print(MCMC.mesa.model)
 ##' 
-##' @author Johan Lindström
+##' @author Johan Lindstrom
 ##'
 ##' @family mcmcSTmodel methods
 ##' @method print mcmcSTmodel
@@ -237,7 +242,7 @@ print.mcmcSTmodel <- function(x, ...){
 ##'   data(MCMC.mesa.model)
 ##'   summary(MCMC.mesa.model)
 ##' 
-##' @author Johan Lindström
+##' @author Johan Lindstrom
 ##' 
 ##' @family mcmcSTmodel methods
 ##' @method summary mcmcSTmodel
@@ -277,7 +282,7 @@ summary.mcmcSTmodel <- function(object, burnIn=0, ...){
 ##'   \code{\link[base:print]{print.table}}.
 ##' @return Nothing
 ##'
-##' @author Johan Lindström
+##' @author Johan Lindstrom
 ##' 
 ##' @family mcmcSTmodel methods
 ##' @method print summary.mcmcSTmodel
@@ -325,8 +330,9 @@ print.summary.mcmcSTmodel <- function(x, ...){
 ##'
 ##' @example Rd_examples/Ex_plot_mcmcSTmodel.R
 ##' 
-##' @author Johan Lindström
+##' @author Johan Lindstrom
 ##' 
+##' @importFrom graphics lines
 ##' @family mcmcSTmodel methods
 ##' @method plot mcmcSTmodel
 ##' @export
@@ -394,7 +400,7 @@ plot.mcmcSTmodel <- function(x, y="like", add=FALSE, main=NULL, ...){
 ##'
 ##' @example Rd_examples/Ex_density_mcmcSTmodel.R
 ##' 
-##' @author Johan Lindström
+##' @author Johan Lindstrom
 ##' 
 ##' @family mcmcSTmodel methods
 ##' @importFrom stats density
@@ -464,9 +470,11 @@ density.mcmcSTmodel <- function(x, BurnIn=0, estSTmodel=NULL, ...){
 ##'
 ##' @example Rd_examples/Ex_density_mcmcSTmodel.R
 ##' 
-##' @author Johan Lindström
+##' @author Johan Lindstrom
 ##' 
 ##' @family mcmcSTmodel methods
+##' @importFrom stats dnorm
+##' @importFrom graphics lines
 ##' @method plot density.mcmcSTmodel
 ##' @export
 plot.density.mcmcSTmodel <- function(x, y=1, add=FALSE, norm.col=0,

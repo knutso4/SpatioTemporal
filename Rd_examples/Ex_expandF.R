@@ -13,15 +13,3 @@ expandF(F, idx)
 
 ##compute the expanded matrix, assuming additional locations
 expandF(F, idx, 5)
-
-##or as a full matrix
-expandF(F, idx, 5, sparse=FALSE)
-
-\dontshow{
-  if( abs(max(expandF(F, idx)-expandF(F, idx, sparse=FALSE)))>1e-13 ){
-    stop("Error in 'expandF', full not equal")
-  }
-  if( abs(max(expandF(F, idx, 5)-expandF(F, idx, 5, sparse=FALSE)))>1e-13 ){
-    stop("Error in 'expandF', expanded full not equal")
-  }
-}

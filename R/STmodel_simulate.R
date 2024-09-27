@@ -37,11 +37,12 @@
 ##'
 ##' @example Rd_examples/Ex_simulate_STmodel.R
 ##' 
-##' @author Johan Lindström
+##' @author Johan Lindstrom
 ##' 
 ##' @family STmodel methods
-##' @importFrom stats simulate
 ##' @importFrom MASS mvrnorm
+##' @importFrom stats rnorm
+##' @importFrom stats simulate
 ##' @method simulate STmodel
 ##' @export
 simulate.STmodel <- function(object, nsim=1, seed=NULL, x, nugget.unobs=0, ...){
@@ -95,14 +96,12 @@ simulate.STmodel <- function(object, nsim=1, seed=NULL, x, nugget.unobs=0, ...){
     colnames(F)[2:dimensions$m] <- names(object$trend)[I]
   }
 
-  ##compute the new full distance matrices.
+  ##compute the new full distance matrices (needed since internal distance matrices in STmodel do NOT contain distances to unobserved points)
   D.nu <- crossDist( object$locations[, c("x.nu","y.nu"), drop=FALSE] )
-  colnames(D.nu) <- rownames(D.nu) <- object$locations$ID
   D.beta <- crossDist( object$locations[, c("x.beta","y.beta"), drop=FALSE] )
-  colnames(D.beta) <- rownames(D.beta) <- object$locations$ID
 
   ##calculate the land use regression for the temporal trends, as column
-  mu.B <- matrix(calc.mu.B(object$LUR.all, alpha), ncol=1)
+  mu.B <- bdiag(object$LUR.all) %*% do.call(rbind,alpha)
   
   ##create covariance matrices, beta-field
   sigma.B <- makeSigmaB(cov.pars.beta$pars, dist = D.beta,
@@ -118,25 +117,20 @@ simulate.STmodel <- function(object, nsim=1, seed=NULL, x, nugget.unobs=0, ...){
                           blocks1 = dimensions$n, ind1 = 1:dimensions$n)
   
   ##calculate block cholesky factor of the matrices
-  Rsigma.B <- try( makeCholBlock(sigma.B, n.blocks=dimensions$m), silent=TRUE)
-  Rsigma.nu <- try( makeCholBlock(sigma.nu, n.blocks=1), silent=TRUE)
+  Rsigma.B <- try( chol(sigma.B), silent=TRUE)
+  Rsigma.nu <- try( chol(sigma.nu), silent=TRUE)
 
-  ##array of simulated beta-fields
-  B <- array(0, c(dimensions$n, dimensions$m, nsim))
+  ##simulate data from B
+  if( class(Rsigma.B)=="try-error" ){
+    B <-  as.matrix(mvrnorm(n=nsim, mu=mu.B, Sigma=sigma.B))
+  }else{
+    B <- as.matrix( t(Rsigma.B) %*% matrix(rnorm(dim(Rsigma.B)[1]*nsim), dim(Rsigma.B)[1], nsim) )
+  }
+  ##Reshape and name simulated beta-fields
+  dim(B) <- c(dimensions$n, dimensions$m, nsim)
   dimnames(B)[[1]] <- as.character( object$locations$ID )
   dimnames(B)[[2]] <- names( object$LUR.all )
   dimnames(B)[[3]] <- paste("nsim", as.character(1:nsim), sep=".")
-  ##simulate data from B
-  for(j in 1:dimensions$m){
-    Ind <- (1:dimensions$n) + (j-1)*dimensions$n
-    if( class(Rsigma.B)=="try-error" ){
-      B[,j,] <-  t( mvrnorm(n=nsim, mu=mu.B[Ind], Sigma=sigma.B[Ind,Ind]) )
-    }else{
-      R <- t(Rsigma.B[Ind,Ind])
-      B[,j,] <- matrix(mu.B[Ind], dimensions$n, nsim) + 
-        R %*% matrix(rnorm(dim(R)[1]*nsim), dim(R)[1], nsim)
-    }
-  }
   ##create a time points by observations points matrix
   ##to hold the simulated data.
   X <- array(0, c(dim(F)[1], dimensions$n, nsim))
